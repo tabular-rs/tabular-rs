@@ -22,6 +22,20 @@ enum FormatSpec {
     Literal(String),
 }
 
+fn get_column_spec(chars: &mut std::str::Chars) -> String {
+    let mut result = String::new();
+
+    while let Some(c) = chars.next() {
+        if c == '}' {
+            return result;
+        }
+
+        result.push(c);
+    }
+
+    panic!("Table::new: unclosed column specifier: ‘{}’");
+}
+
 fn parse_format_string(spec: &str) -> (Vec<FormatSpec>, usize) {
     use self::FormatSpec::*;
 
@@ -32,34 +46,35 @@ fn parse_format_string(spec: &str) -> (Vec<FormatSpec>, usize) {
     let mut chars = spec.chars();
 
     while let Some(c) = chars.next() {
-        if c == '%' {
-            match chars.next() {
-                Some('%') => buf.push('%'),
-
-                Some('l') => {
-                    if !buf.is_empty() {
-                        vec.push(Literal(buf));
-                        buf = String::new();
-                    }
-                    vec.push(Left);
-                    count += 1;
-                }
-
-                Some('r') => {
-                    if !buf.is_empty() {
-                        vec.push(Literal(buf));
-                        buf = String::new();
-                    }
-                    vec.push(Right);
-                    count += 1;
-                }
-
-                Some(c) => panic!("Table::new: bad format spec ‘%{}’", c),
-
-                None    => panic!("Table::new: string ends in single %"),
+        let mut align = |buf: &mut String, format_spec: FormatSpec| {
+            if !buf.is_empty() {
+                vec.push(Literal(std::mem::replace(buf, String::new())));
             }
-        } else {
-            buf.push(c);
+            vec.push(format_spec);
+            count += 1;
+        };
+
+        match c {
+            '{' => {
+                let col_spec = get_column_spec(&mut chars);
+
+                match col_spec.as_str() {
+                    ":<" => align(&mut buf, Left),
+                    ":>" => align(&mut buf, Right),
+                    _    => panic!("Table::new: bad format spec ‘{{{}}}’", col_spec),
+                }
+
+            }
+
+            '}' => {
+                if chars.next() == Some('}') {
+                    buf.push('}');
+                } else {
+                    panic!("Table::new: unexpected single ‘}’ character")
+                }
+            }
+
+            _ => buf.push(c),
         }
     }
 
@@ -180,8 +195,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn table() {
-        let mut table = Table::new("%r  (%l) %l");
+    fn alignment() {
+        let mut table = Table::new("{:>}  ({:<}) {:<}");
         table
             .add_row(Row::new().add_cell(1).add_cell("I").add_cell("one"))
             .add_row(Row::new().add_cell(5).add_cell("V").add_cell("five"))
