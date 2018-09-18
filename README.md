@@ -1,5 +1,10 @@
 # tabular: plain text tables in Rust
 
+[![Build Status](https://travis-ci.org/tov/tabular-rs.svg?branch=master)](https://travis-ci.org/tov/tabular-rs)
+[![Crates.io](https://img.shields.io/crates/v/tabular.svg?maxAge=2592000)](https://crates.io/crates/tabular)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE-MIT)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE-APACHE)
+
 Builds plain, automatically-aligned tables of monospaced text.
 This is basically what you want if you are implementing `ls`.
 
