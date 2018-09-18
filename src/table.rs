@@ -190,8 +190,8 @@ impl Display for Table {
         }
 
         for row in &self.rows {
-            match row {
-                InternalRow::Cells(cells) => {
+            match *row {
+                InternalRow::Cells(ref cells) => {
                     let mut cw_iter  = self.column_widths.iter().cloned();
                     let mut row_iter = cells.iter();
 
@@ -230,7 +230,7 @@ impl Display for Table {
                     }
                 }
 
-                InternalRow::Heading(s) => {
+                InternalRow::Heading(ref s) => {
                     f.write_str(s)?;
                 }
             }
