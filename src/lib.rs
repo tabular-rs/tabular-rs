@@ -1,7 +1,7 @@
 #[cfg(feature = "unicode-width")]
 extern crate unicode_width;
 
-use std::fmt::Display;
+use std::fmt::{Debug, Formatter, Display};
 
 /// Errors from parsing the table format string.
 ///
@@ -34,7 +34,7 @@ impl std::error::Error for Error {
 }
 
 impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         match *self {
             Error::UnclosedColumnSpec(ref spec) =>
                 write!(f, "unclosed column specifier: ‘{{{}’", spec),
@@ -54,15 +54,23 @@ pub type Result<T> = std::result::Result<T, Error>;
 /// Type for building a [`Table`] row.
 ///
 /// Make a new one with [`Row::new()`], then add to it with [`Row::add_cell()`].
+/// Or make a complete one with [`Row::from_cells()`].
 ///
 /// [`Table`]: struct.Table.html
 /// [`Row::new()`]: struct.Row.html#method.new
+/// [`Row::from_cells()`]: struct.Row.html#method.from_cells
 /// [`Row::add_cell()`]: struct.Row.html#method.add_cell
+#[derive(Clone, Default)]
 pub struct Row(Vec<WidthString>);
 
 impl Row {
     pub fn new() -> Self {
         Row(Vec::new())
+    }
+
+    pub fn add_cell<S: Display>(mut self, value: S) -> Self {
+        self.0.push(WidthString::new(value));
+        self
     }
 
     pub fn from_cells<S, I>(values: I) -> Self
@@ -71,17 +79,43 @@ impl Row {
 
         Row(values.into_iter().map(Into::into).map(WidthString::new).collect())
     }
+}
 
-    pub fn add_cell<S: Display>(mut self, value: S) -> Self {
-        self.0.push(WidthString::new(value));
-        self
+impl Debug for Row {
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+        write!(f, "Row::from_cells(vec!{:?})", self.0)
     }
 }
 
+#[derive(Clone, Debug)]
 enum FormatSpec {
     Left,
     Right,
     Literal(String),
+}
+
+fn format_string_to_string(specs: &[FormatSpec]) -> String {
+    use self::FormatSpec::*;
+
+    let mut result = String::new();
+
+    for spec in specs {
+        match *spec {
+            Left  => result.push_str("{:<}"),
+            Right => result.push_str("{:>}"),
+            Literal(ref literal) => {
+                for c in literal.chars() {
+                    match c {
+                        '{' => result.push_str("{{"),
+                        '}' => result.push_str("}}"),
+                        _   => result.push(c),
+                    }
+                }
+            }
+        }
+    }
+
+    result
 }
 
 fn get_column_spec(chars: &mut std::str::Chars) -> Result<String> {
@@ -147,6 +181,7 @@ fn parse_format_string(spec: &str) -> Result<(Vec<FormatSpec>, usize)> {
     Ok((vec, count))
 }
 
+#[derive(Clone, Debug)]
 enum InternalRow {
     Cells(Vec<WidthString>),
     Heading(String),
@@ -161,6 +196,7 @@ enum InternalRow {
 /// [`Table::new()`]: struct.Table.html#method.new
 /// [`Table::add_row()`]: struct.Table.html#method.add_row
 /// [`Table::add_heading()`]: struct.Table.html#method.add_heading
+#[derive(Clone)]
 pub struct Table {
     n_columns:     usize,
     format:        Vec<FormatSpec>,
@@ -184,8 +220,8 @@ impl Table {
         })
     }
 
-    pub fn add_heading(&mut self, heading: String) -> &mut Self {
-        self.rows.push(InternalRow::Heading(heading));
+    pub fn add_heading<S: Into<String>>(&mut self, heading: S) -> &mut Self {
+        self.rows.push(InternalRow::Heading(heading.into()));
         self
     }
 
@@ -203,8 +239,31 @@ impl Table {
     }
 }
 
+impl Debug for Table {
+    // This method allocates in two places:
+    //   - format_string_to_string
+    //   - row.clone()
+    // It doesn't need to do either.
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+        write!(f, "Table::new({:?})", format_string_to_string(&self.format))?;
+
+        for row in &self.rows {
+            match *row {
+                InternalRow::Cells(ref row) => {
+                    write!(f, ".add_row({:?})", Row(row.clone()))?
+                },
+                InternalRow::Heading(ref heading) => {
+                    write!(f, ".add_heading({:?})", heading)?
+                },
+            }
+        }
+
+        Ok(())
+    }
+}
+
 impl Display for Table {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         use self::FormatSpec::*;
 
         let max_column_width = self.column_widths.iter().cloned().max().unwrap_or(0);
@@ -265,6 +324,7 @@ impl Display for Table {
     }
 }
 
+#[derive(Clone)]
 struct WidthString {
     string: String,
     width: usize,
@@ -289,6 +349,12 @@ impl WidthString {
     }
 }
 
+impl Debug for WidthString {
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+        write!(f, "{:?}", self.string)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -309,6 +375,27 @@ mod tests {
  10  (X) ten
  50  (L) fifty
 100  (C) one-hundred
+"# );
+    }
+
+    #[test]
+    fn heading() {
+        let row = Row::from_cells(vec!["a", "b", "c"]);
+        eprintln!("{:?}", row);
+
+        let table = Table::new("{:<} {:<} {:>}")
+            .add_row(Row::from_cells(vec!["a", "b", "d"]))
+            .add_heading("This is my table")
+            .add_row(Row::from_cells(vec!["ab", "bc", "cd"]))
+            .clone();
+
+        eprintln!("\n\n{:?}\n\n", table);
+
+        assert_eq! ( format!("\n{}", table),
+                     r#"
+a  b   d
+This is my table
+ab bc cd
 "# );
     }
 }
