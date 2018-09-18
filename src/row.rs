@@ -95,7 +95,7 @@ impl Row {
     ///     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
     ///         let ncols = self.width;
     ///         let row_spec: String =
-    ///              std::iter::repeat("{:>} ".chars()).take(ncols).flatten().collect();
+    ///              std::iter::repeat("{:>} ".chars()).take(ncols).flat_map(|x| x).collect();
     ///
     ///         let mut table = Table::new(row_spec.trim_right());
     ///
