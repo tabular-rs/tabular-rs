@@ -32,9 +32,10 @@
 //! produces something like
 //!
 //! ```text
-//!  1198     target/.rustc_info.json
-//!  1120  d  target/doc
-//!   672  d  target/debug
+//! 1198     target/.rustc_info.json
+//! 1120  d  target/doc
+//!  192  d  target/package
+//! 1056  d  target/debug
 //! ```
 //!
 //! This crate supports Rust version 1.18.0 and later.
@@ -159,5 +160,7 @@ a bcdef g
     }
 
     #[test]
-    fn temporary() {}
+    fn temporary() {
+
+    }
 }

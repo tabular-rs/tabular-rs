@@ -38,9 +38,10 @@ ls(Path::new(&"target")).unwrap();
 produces something like
 
 ```
- 1198     target/.rustc_info.json
- 1120  d  target/doc
-  672  d  target/debug
+1198     target/.rustc_info.json
+1120  d  target/doc
+ 192  d  target/package
+1056  d  target/debug
 ```
 
 ## Usage
