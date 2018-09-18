@@ -3,7 +3,28 @@ extern crate unicode_width;
 use unicode_width::UnicodeWidthStr;
 use std::fmt::Display;
 
-pub struct Row(Vec<String>);
+struct WidthString {
+    string: String,
+    width: usize,
+}
+
+impl WidthString {
+    fn new<T: Display>(thing: T) -> Self {
+        let string = thing.to_string();
+        let width  = string.width();
+        WidthString { string, width }
+    }
+
+    fn width(&self) -> usize {
+        self.width
+    }
+
+    fn as_str(&self) -> &str {
+        &self.string
+    }
+}
+
+pub struct Row(Vec<WidthString>);
 
 impl Row {
     pub fn new() -> Self {
@@ -11,7 +32,7 @@ impl Row {
     }
 
     pub fn add_cell<S: Display>(mut self, value: S) -> Self {
-        self.0.push(value.to_string());
+        self.0.push(WidthString::new(value));
         self
     }
 }
@@ -86,7 +107,7 @@ fn parse_format_string(spec: &str) -> (Vec<FormatSpec>, usize) {
 }
 
 enum InternalRow {
-    Cells(Vec<String>),
+    Cells(Vec<WidthString>),
     Heading(String),
 }
 
@@ -134,25 +155,26 @@ impl Display for Table {
         for row in &self.rows {
             match row {
                 InternalRow::Cells(cells) => {
-                    let mut cw_iter = self.column_widths.iter().cloned();
-                    let mut v_iter  = cells.iter();
+                    let mut cw_iter  = self.column_widths.iter().cloned();
+                    let mut row_iter = cells.iter();
 
                     for field in 0 .. self.format.len() {
                         let fs = &self.format[field];
 
                         match fs {
                             Left  => {
-                                let cw = cw_iter.next().unwrap();
-                                let v = match v_iter.next() {
-                                    Some(v) => v.to_owned(),
-                                    None    => "".to_owned(),
+                                let cw    = cw_iter.next().unwrap();
+                                let width = match row_iter.next() {
+                                    Some(ws) => {
+                                        f.write_str(&ws.string)?;
+                                        ws.width
+                                    }
+                                    None     => 0,
                                 };
 
-                                f.write_str(&v)?;
-
                                 if field + 1 < self.format.len() {
-                                    let width = cw - v.width();
-                                    for _ in 0 .. width {
+                                    let remaining = cw - width;
+                                    for _ in 0 .. remaining {
                                         f.write_str(" ")?;
                                     }
                                 }
@@ -160,17 +182,21 @@ impl Display for Table {
 
                             Right => {
                                 let cw = cw_iter.next().unwrap();
-                                let v = match v_iter.next() {
-                                    Some(v) => v.to_owned(),
-                                    None    => "".to_owned(),
+                                match row_iter.next() {
+                                    Some(ws) => {
+                                        let remaining = cw - ws.width();
+                                        for _ in 0 .. remaining {
+                                            f.write_str(" ")?;
+                                        }
+
+                                        f.write_str(ws.as_str())?;
+                                    },
+                                    None     => {
+                                        for _ in 0 .. cw {
+                                            f.write_str(" ")?;
+                                        }
+                                    }
                                 };
-
-                                let width = cw - v.width();
-                                for _ in 0 .. width {
-                                    f.write_str(" ")?;
-                                }
-
-                                f.write_str(&v)?;
                             }
 
                             Literal(s) => f.write_str(&s)?,
