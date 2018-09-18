@@ -61,17 +61,15 @@ pub fn parse_row_spec(spec: &str) -> Result<(Vec<ColumnSpec>, usize)> {
                             Some('}') => align(&mut buf, Left),
                             Some(c) => return Err(Error::UnexpectedCharacter(c)),
                             None => return Err(Error::UnclosedColumnSpec(":<".to_string())),
-                        }
+                        },
                         Some('>') => match chars.next() {
                             Some('}') => align(&mut buf, Right),
                             Some(c) => return Err(Error::UnexpectedCharacter(c)),
                             None => return Err(Error::UnclosedColumnSpec(":>".to_string())),
-                        }
+                        },
                         Some(c) => return Err(Error::BadColumnSpec(format!(":{}", c))),
-                    }
-                    Some(c) => {
-                        return Err(Error::UnexpectedCharacter(c))
-                    }
+                    }     ,
+                    Some(c) => return Err(Error::UnexpectedCharacter(c)),
                 }
             }
 

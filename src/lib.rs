@@ -1,16 +1,18 @@
 #![doc(html_root_url = "https://docs.rs/tabular/0.1.0")]
 //! Builds plain, automatically-aligned tables of monospaced text.
 //!
-//! This is basically what you if you are implementing `ls`.
+//! This is basically what you want if you are implementing `ls`.
 //!
-//! # Usage
+//! # Details
 //!
 //! The number and alignment of the columns is determined by a format string
 //! passed to [`Table::new`]. Then, [`Row`]s are added to the [`Table`]
 //! using [`Table::add_row`] or [`Table::with_row`]. Each row is is constructed
 //! by [`Row::new`] or `[Row::from_cells]`
 //!
-//! ## Getting it
+//! # Examples
+//!
+//! # Usage
 //! 
 //! It's on [crates.io](https://crates.io/crates/tabular), so you can add
 //!
