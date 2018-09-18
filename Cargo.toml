@@ -2,6 +2,12 @@
 name = "tabular"
 version = "0.1.0"
 authors = ["Jesse A. Tov <jesse.tov@gmail.com>"]
+description = "Plain text tables, aligned automatically"
+repository = "https://github.com/tov/tabular-rs"
+readme = "README.md"
+license = "MIT/Apache-2.0"
+keywords = ["tables", "formatting", "alignment", "text", "cli"]
+categories = ["value-formatting"]
 
 [features]
 default = ["unicode-width"]
