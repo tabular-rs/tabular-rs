@@ -174,3 +174,27 @@ impl Display for Table {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn table() {
+        let mut table = Table::new("%r  (%l) %l");
+        table
+            .add_row(Row::new().add_cell(1).add_cell("I").add_cell("one"))
+            .add_row(Row::new().add_cell(5).add_cell("V").add_cell("five"))
+            .add_row(Row::new().add_cell(10).add_cell("X").add_cell("ten"))
+            .add_row(Row::new().add_cell(50).add_cell("L").add_cell("fifty"))
+            .add_row(Row::new().add_cell(100).add_cell("C").add_cell("one-hundred"));
+        assert_eq!( format!("\n{}", table),
+                    r#"
+  1  (I) one
+  5  (V) five
+ 10  (X) ten
+ 50  (L) fifty
+100  (C) one-hundred
+"# );
+    }
+}
