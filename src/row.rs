@@ -15,17 +15,39 @@ use std::fmt::{Debug, Display, Formatter};
 pub struct Row(pub (crate) Vec<WidthString>);
 
 impl Row {
+    /// Makes a new, empty table row.
     pub fn new() -> Self {
         Row(Vec::new())
     }
 
-    pub fn add_cell<S: Display>(&mut self, value: S) -> &mut Self {
-        self.0.push(WidthString::new(value));
+    /// Adds a cell to this table row.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// struct DirEntry {
+    ///     size:         usize,
+    ///     is_directory: bool,
+    ///     name:         String,
+    /// }
+    ///
+    /// impl DirEntry {
+    ///     fn to_row(&self) -> tabular::Row {
+    ///         tabular::Row::new()
+    ///             .with_cell(self.size)
+    ///             .with_cell(if self.is_directory { "d" } else { "" })
+    ///             .with_cell(&self.name)
+    ///     }
+    /// }
+    /// ```
+    pub fn with_cell<S: Display>(mut self, value: S) -> Self {
+        self.add_cell(value);
         self
     }
 
-    pub fn with_cell<S: Display>(mut self, value: S) -> Self {
-        self.add_cell(value);
+    /// Adds a cell to this table row.
+    pub fn add_cell<S: Display>(&mut self, value: S) -> &mut Self {
+        self.0.push(WidthString::new(value));
         self
     }
 
@@ -34,6 +56,46 @@ impl Row {
               I: IntoIterator<Item = S> {
 
         Row(values.into_iter().map(Into::into).map(WidthString::new).collect())
+    }
+    
+    /// The number of cells in this row.
+    ///
+    /// # Examples
+    ///
+    /// It's probably not actually useful, because you are unlikely to come
+    /// upon a row whose size you don't already know. But it's useful for stating
+    /// [`Table::add_row`]'s invariant.
+    ///
+    /// ```
+    /// # use tabular::*;
+    /// fn print_ragged_matrix<T: ::std::fmt::Display>(matrix: &[&[T]]) {
+    ///    let ncols = matrix.iter().map(|row| row.len()).max().unwrap_or(0);
+    ///
+    ///    let mut row_spec = String::with_capacity(5 * ncols);
+    ///    for _ in 0 .. ncols {
+    ///        row_spec.push_str("{:>} ");
+    ///    }
+    ///
+    ///    let mut table = Table::new(row_spec.trim_right());
+    ///
+    ///    for row in matrix {
+    ///        let mut table_row = Row::from_cells(row.iter().map(ToString::to_string));
+    ///
+    ///        // Don't remember how to count or subtract but I'll get there eventually.
+    ///        while table_row.len() < table.column_count() {
+    ///            table_row.add_cell("");
+    ///        }
+    ///    }
+    ///
+    ///    print!("{}", table);
+    /// }
+    ///
+    /// print_ragged_matrix(&[&[1, 2, 3, 4, 5], &[12, 23, 34], &[123, 234], &[1234]]);
+    /// ```
+    ///
+    /// [`Table::add_row`]: struct.Table.html#method.add_row
+    pub fn len(&self) -> usize {
+        self.0.len()
     }
 }
 

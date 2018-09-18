@@ -1,3 +1,7 @@
+#![doc(html_root_url = "https://docs.rs/tabular/0.1.0")]
+///
+///
+
 use column_spec::{ColumnSpec, parse_row_spec, row_spec_to_string};
 use error::Result;
 use row::{InternalRow, Row};
@@ -37,16 +41,70 @@ impl Table {
         })
     }
 
+    /// The number of columns in the table.
+    pub fn column_count(&self) -> usize {
+        // ^^^^^^^^^^^^ What’s a better name for this?
+        self.n_columns
+    }
+
+    /// Adds a pre-formatted row that spans all columns.
+    ///
+    /// A heading does not interact with the formatting of rows made of cells.
+    /// This is like `\intertext` in LaTeX, not like `<head>` or `<th>` in HTML.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use tabular::*;
+    ///         let mut table = Table::new("{:<}  {:>}");
+    ///         table
+    ///             .add_heading("./:")
+    ///             .add_row(Row::new().with_cell("Cargo.lock").with_cell(433))
+    ///             .add_row(Row::new().with_cell("Cargo.toml").with_cell(204))
+    ///             .add_heading("")
+    ///             .add_heading("src/:")
+    ///             .add_row(Row::new().with_cell("lib.rs").with_cell(10257))
+    ///             .add_heading("")
+    ///             .add_heading("target/:")
+    ///             .add_row(Row::new().with_cell("debug/").with_cell(672));
+    /// 
+    ///         assert_eq!( format!("{}", table),
+    ///                     "./:\n\
+    ///                      Cargo.lock    433\n\
+    ///                      Cargo.toml    204\n\
+    ///                      \n\
+    ///                      src/:\n\
+    ///                      lib.rs      10257\n\
+    ///                      \n\
+    ///                      target/:\n\
+    ///                      debug/        672\n\
+    ///                      " );
+    /// ```
+    /// 
     pub fn add_heading<S: Into<String>>(&mut self, heading: S) -> &mut Self {
         self.rows.push(InternalRow::Heading(heading.into()));
         self
     }
 
+    /// Convenience function for calling [`add_heading`].
+    ///
+    /// [`add_heading`]: #method.add_heading
     pub fn with_heading<S: Into<String>>(mut self, heading: S) -> Self {
         self.add_heading(heading);
         self
     }
 
+    /// Adds a row made up of cells.
+    ///
+    /// When printed, each cell will be padded to the size of its column, which is the maximum of
+    /// the width of its cells.
+    ///
+    /// # Panics
+    ///
+    /// If `self.`[`column_count()`]` != row.`[`len()`].
+    ///
+    /// [`column_count()`]: #method.column_count
+    /// [`len()`]: struct.Row.html#method.len
     pub fn add_row(&mut self, row: Row) -> &mut Self {
         let cells = row.0;
 
@@ -60,6 +118,13 @@ impl Table {
         self
     }
 
+    /// Convenience function for calling [`add_row`].
+    ///
+    /// # Panics
+    ///
+    /// The same as [`add_row`].
+    ///
+    /// [`add_row`]: #method.add_row
     pub fn with_row(mut self, row: Row) -> Self {
         self.add_row(row);
         self
