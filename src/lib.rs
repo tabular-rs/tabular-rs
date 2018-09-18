@@ -1,3 +1,9 @@
+#![doc(html_root_url = "https://docs.rs/tabular/0.1.0")]
+//!
+//!
+
+#![warn(missing_docs)]
+
 #[cfg(feature = "unicode-width")]
 extern crate unicode_width;
 

@@ -31,20 +31,6 @@ pub fn row_spec_to_string(specs: &[ColumnSpec]) -> String {
     result
 }
 
-pub fn get_column_spec(chars: &mut ::std::str::Chars) -> Result<String> {
-    let mut result = String::new();
-
-    while let Some(c) = chars.next() {
-        if c == '}' {
-            return Ok(result);
-        }
-
-        result.push(c);
-    }
-
-    Err(Error::UnclosedColumnSpec(result))
-}
-
 pub fn parse_row_spec(spec: &str) -> Result<(Vec<ColumnSpec>, usize)> {
     use self::ColumnSpec::*;
 
@@ -63,24 +49,35 @@ pub fn parse_row_spec(spec: &str) -> Result<(Vec<ColumnSpec>, usize)> {
             count += 1;
         };
 
+        // Should be generating this.
         match c {
             '{' => {
-                let col_spec = get_column_spec(&mut chars)?;
-
-                match col_spec.as_str() {
-                    ":<" => align(&mut buf, Left),
-                    ":>" => align(&mut buf, Right),
-                    _    => return Err(Error::BadColumnSpec(col_spec)),
+                match chars.next() {
+                    None => return Err(Error::UnclosedColumnSpec(String::new())),
+                    Some('{') => buf.push('{'),
+                    Some(':') => match chars.next() {
+                        None => return Err(Error::UnclosedColumnSpec(":".to_owned())),
+                        Some('<') => match chars.next() {
+                            Some('}') => align(&mut buf, Left),
+                            Some(c) => return Err(Error::UnexpectedCharacter(c)),
+                            None => return Err(Error::UnclosedColumnSpec(":<".to_string())),
+                        }
+                        Some('>') => match chars.next() {
+                            Some('}') => align(&mut buf, Right),
+                            Some(c) => return Err(Error::UnexpectedCharacter(c)),
+                            None => return Err(Error::UnclosedColumnSpec(":>".to_string())),
+                        }
+                        Some(c) => return Err(Error::BadColumnSpec(format!(":{}", c))),
+                    }
+                    Some(c) => {
+                        return Err(Error::UnexpectedCharacter(c))
+                    }
                 }
-
             }
 
-            '}' => {
-                if chars.next() == Some('}') {
-                    buf.push('}');
-                } else {
-                    return Err(Error::UnexpectedRightBrace);
-                }
+            '}' => match chars.next() {
+                Some('}') => buf.push('}'),
+                _ => return Err(Error::UnexpectedRightBrace),
             }
 
             _ => buf.push(c),

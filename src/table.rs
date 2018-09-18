@@ -1,7 +1,3 @@
-#![doc(html_root_url = "https://docs.rs/tabular/0.1.0")]
-///
-///
-
 use column_spec::{ColumnSpec, parse_row_spec, row_spec_to_string};
 use error::Result;
 use row::{InternalRow, Row};
@@ -26,11 +22,37 @@ pub struct Table {
 }
 
 impl Table {
+    /// Constructs a new table with the format of each row specified by `row_spec`.
+    ///
+    /// Unlike `format!` and friends, `row_spec` is processed manually, but it uses a small
+    /// subset of the syntax to determine how columns are laid out. In particular:
+    ///
+    ///   - `{:<}` produces a left-aligned column.
+    ///
+    ///   - `{:>}` produces a right-aligned column.
+    ///
+    ///   - `{{` produces a literal `{` character.
+    ///
+    ///   - `}}` produces a literal `}` character.
+    ///
+    ///   - Everything else stands for itself.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use tabular::*;
+    /// let table = Table::new("{{:<}} produces ‘{:<}’ and {{:>}} produces ’{:>}’")
+    ///     .with_row(Row::from_cells(["a", "bc"].iter().cloned()));
+    /// ```
     pub fn new(row_spec: &str) -> Self {
-        Self::new_safe(row_spec).unwrap_or_else(|e|
+        Self::new_safe(row_spec).unwrap_or_else(|e: super::error::Error|
             panic!("tabular::Table::new: {}", e))
     }
 
+    /// Like [`new`], but returns a [`Result`] instead of panicking if parsing `row_spec` fails.
+    ///
+    /// [`new`]: #method.new
+    /// [`Result`]: type.Result.html
     pub fn new_safe(row_spec: &str) -> Result<Self> {
         let (format, n_columns) = parse_row_spec(row_spec)?;
         Ok(Table {

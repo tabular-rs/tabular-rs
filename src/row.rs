@@ -7,6 +7,26 @@ use std::fmt::{Debug, Display, Formatter};
 /// Make a new one with [`Row::new()`], then add to it with [`Row::with_cell()`].
 /// Or make a complete one with [`Row::from_cells()`].
 ///
+/// # Examples
+///
+/// ```
+/// # use tabular::*;
+///         let table = Table::new("{:>}  ({:<}) {:<}")
+///             .with_row(Row::new().with_cell(1).with_cell("I").with_cell("one"))
+///             .with_row(Row::new().with_cell(5).with_cell("V").with_cell("five"))
+///             .with_row(Row::new().with_cell(10).with_cell("X").with_cell("ten"))
+///             .with_row(Row::new().with_cell(50).with_cell("L").with_cell("fifty"))
+///             .with_row(Row::new().with_cell(100).with_cell("C").with_cell("one-hundred"));
+///         assert_eq!( format!("\n{}", table),
+///                     r#"
+///   1  (I) one
+///   5  (V) five
+///  10  (X) ten
+///  50  (L) fifty
+/// 100  (C) one-hundred
+/// "# );
+/// ```
+///
 /// [`Table`]: struct.Table.html
 /// [`Row::new()`]: struct.Row.html#method.new
 /// [`Row::from_cells()`]: struct.Row.html#method.from_cells
@@ -46,11 +66,56 @@ impl Row {
     }
 
     /// Adds a cell to this table row.
+    ///
+    /// This performs the same work as [`with_cell`], but it's is convenient for adding cells in
+    /// a loop without having to reassign the row each time. See the example for [`len`].
+    ///
+    /// [`with_cell`]: #method.with_cell
+    /// [`len`]: #method.len
     pub fn add_cell<S: Display>(&mut self, value: S) -> &mut Self {
         self.0.push(WidthString::new(value));
         self
     }
 
+    /// Builds a row from an iterator over strings.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use tabular::*;
+    /// use std::fmt::Display;
+    ///
+    /// struct Matrix<'a, T: 'a> {
+    ///     width:  usize,
+    ///     height: usize,
+    ///     data:   &'a [T],
+    /// }
+    ///
+    /// impl<'a, T: Display> Display for Matrix<'a, T> {
+    ///     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    ///         let ncols = self.width;
+    ///         let row_spec: String =
+    ///              std::iter::repeat("{:>} ".chars()).take(ncols).flatten().collect();
+    ///
+    ///         let mut table = Table::new(row_spec.trim_right());
+    ///
+    ///         for row_index in 0 .. self.height {
+    ///             table.add_row(Row::from_cells(
+    ///                 self.data[row_index * ncols ..]
+    ///                     .iter().take(ncols)
+    ///                     .map(|elt: &T| elt.to_string())));
+    ///         }
+    ///
+    ///         write!(f, "{}", table)
+    ///     }
+    /// }
+    ///
+    /// print!("{}", Matrix {
+    ///     width:   3,
+    ///     height:  2,
+    ///     data:    &[1, 23, 456, 7890, 12345, 678901],
+    /// });
+    /// ```
     pub fn from_cells<S, I>(values: I) -> Self
         where S: Into<String>,
               I: IntoIterator<Item = S> {
@@ -68,7 +133,8 @@ impl Row {
     ///
     /// ```
     /// # use tabular::*;
-    /// fn print_ragged_matrix<T: ::std::fmt::Display>(matrix: &[&[T]]) {
+    /// # use std::fmt::Display;
+    /// fn print_ragged_matrix<T: Display>(matrix: &[&[T]]) {
     ///    let ncols = matrix.iter().map(|row| row.len()).max().unwrap_or(0);
     ///
     ///    let mut row_spec = String::with_capacity(5 * ncols);
