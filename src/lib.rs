@@ -1,5 +1,7 @@
+#[cfg(feature = "unicode-width")]
 extern crate unicode_width;
 
+#[cfg(feature = "unicode-width")]
 use unicode_width::UnicodeWidthStr;
 use std::fmt::Display;
 
@@ -11,7 +13,10 @@ struct WidthString {
 impl WidthString {
     fn new<T: Display>(thing: T) -> Self {
         let string = thing.to_string();
+        #[cfg(feature = "unicode-width")]
         let width  = string.width();
+        #[cfg(not(feature = "unicode-width"))]
+        let width  = string.len();
         WidthString { string, width }
     }
 

@@ -3,5 +3,8 @@ name = "tabular"
 version = "0.1.0"
 authors = ["Jesse A. Tov <jesse.tov@gmail.com>"]
 
+[features]
+default = ["unicode-width"]
+
 [dependencies]
-unicode-width = "0.1.5"
+unicode-width = { version = "0.1.5", optional = true }
