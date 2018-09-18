@@ -196,9 +196,7 @@ impl Display for Table {
                     let mut row_iter = cells.iter();
 
                     for field in 0 .. self.format.len() {
-                        let fs = &self.format[field];
-
-                        match fs {
+                        match self.format[field] {
                             Left  => {
                                 let cw    = cw_iter.next().unwrap();
                                 let width = match row_iter.next() {
@@ -225,7 +223,7 @@ impl Display for Table {
                                 };
                             }
 
-                            Literal(s) => f.write_str(&s)?,
+                            Literal(ref s) => f.write_str(s)?,
                         }
                     }
                 }
