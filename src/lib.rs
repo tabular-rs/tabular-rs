@@ -37,6 +37,8 @@
 //!   672  d  target/debug
 //! ```
 //!
+//! This crate supports Rust version 1.18.0 and later.
+//!
 //! # Usage
 //! 
 //! It's on [crates.io](https://crates.io/crates/tabular), so you can add
