@@ -7,8 +7,9 @@ This is basically what you want if you are implementing `ls`.
 
 ```rust
 use tabular::{Table, Row};
+use std::path::Path;
 
-fn ls(dir: &::std::path::Path) -> ::std::io::Result<()> {
+fn ls(dir: &Path) -> ::std::io::Result<()> {
     let mut table = Table::new("{:>}  {:<}{:<}  {:<}");
     for entry_result in ::std::fs::read_dir(dir)? {
         let entry    = entry_result?;
@@ -48,14 +49,26 @@ tabular = "0.1.0"
 
 to your `Cargo.toml`.
 
+Feature `unicode-width` is enabled be default; it depends on the
+[unicode-width](https://crates.io/crates/unicode-width) crate. You can turn 
+it off with:
+
+```toml
+[dependencies]
+tabular = { version = "0.1.0", default-features = false }
+```
+
+Note that without `unicode-width`, alignment will be based on the count of the
+`std::str::Chars` iterator.
+
 ## See also
 
 You may also want:
 
-  - https://crates.io/crates/text-tables – This is more automatic 
-    than tabular. You give it an array of arrays, it renders a nice
-    table with borders. Tabular doesn't do borders.  
-  
-  - https://crates.io/crates/prettytable-rs — This has an API more
-    similar to tabular’s in terms of building a table, but it does
-    a lot more, including, color, borders, and CSV import.
+- [text-tables](https://crates.io/crates/text-tables) – This is more automatic
+  than tabular. You give it an array of arrays, it renders a nice table with 
+  borders. Tabular doesn't do borders.
+
+- [prettytable](https://crates.io/crates/prettytable-rs) — This has an API more
+  similar to tabular’s in terms of building a table, but it does a lot more, 
+  including, color, borders, and CSV import.

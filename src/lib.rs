@@ -6,8 +6,9 @@
 //!
 //! ```
 //! use tabular::{Table, Row};
+//! use std::path::Path;
 //!
-//! fn ls(dir: &::std::path::Path) -> ::std::io::Result<()> {
+//! fn ls(dir: &Path) -> ::std::io::Result<()> {
 //!     let mut table = Table::new("{:>}  {:<}{:<}  {:<}");
 //!     for entry_result in ::std::fs::read_dir(dir)? {
 //!         let entry    = entry_result?;
@@ -46,6 +47,19 @@
 //! ```
 //!
 //! to your `Cargo.toml`.
+//!
+//!
+//! Feature `unicode-width` is enabled be default; it depends on the
+//! [unicode-width](https://crates.io/crates/unicode-width) crate. You can turn
+//! it off with:
+//!
+//! ```toml
+//! [dependencies]
+//! tabular = { version = "0.1.0", default-features = false }
+//! ```
+//!
+//! Note that without `unicode-width`, alignment will be based on the count of the
+//! `std::str::Chars` iterator.
 //!
 //! # See also
 //!

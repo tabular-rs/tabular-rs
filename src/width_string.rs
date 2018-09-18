@@ -12,7 +12,7 @@ impl WidthString {
         #[cfg(feature = "unicode-width")]
         let width  = ::unicode_width::UnicodeWidthStr::width(string.as_str());
         #[cfg(not(feature = "unicode-width"))]
-        let width  = string.len();
+        let width  = string.chars().count();
         WidthString { string, width }
     }
 
