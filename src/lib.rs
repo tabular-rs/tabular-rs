@@ -5,6 +5,38 @@ use std::fmt::Display;
 
 pub struct Row(Vec<WidthString>);
 
+#[derive(Debug, Clone)]
+pub enum Error {
+    UnclosedColumnSpec(String),
+    BadFormatSpec(String),
+    UnexpectedRightBrace,
+}
+
+impl std::error::Error for Error {
+    fn description(&self) -> &str {
+        match *self {
+            Error::UnclosedColumnSpec(_) => "unclosed column specifier",
+            Error::BadFormatSpec(_) => "bad format specifier",
+            Error::UnexpectedRightBrace => "unexpected single ‘}’ character",
+        }
+    }
+}
+
+impl std::fmt::Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match *self {
+            Error::UnclosedColumnSpec(ref spec) =>
+                write!(f, "unclosed column specifier: ‘{{{}’", spec),
+            Error::BadFormatSpec(ref spec) =>
+                write!(f, "bad format specifier: ‘{{{}}}’", spec),
+            Error::UnexpectedRightBrace =>
+                f.write_str("unexpected single ‘}’ character"),
+        }
+    }
+}
+
+pub type Result<T> = std::result::Result<T, Error>;
+
 impl Row {
     pub fn new() -> Self {
         Row(Vec::new())
@@ -22,21 +54,21 @@ enum FormatSpec {
     Literal(String),
 }
 
-fn get_column_spec(chars: &mut std::str::Chars) -> String {
+fn get_column_spec(chars: &mut std::str::Chars) -> Result<String> {
     let mut result = String::new();
 
     while let Some(c) = chars.next() {
         if c == '}' {
-            return result;
+            return Ok(result);
         }
 
         result.push(c);
     }
 
-    panic!("Table::new: unclosed column specifier: ‘{}’");
+    Err(Error::UnclosedColumnSpec(result))
 }
 
-fn parse_format_string(spec: &str) -> (Vec<FormatSpec>, usize) {
+fn parse_format_string(spec: &str) -> Result<(Vec<FormatSpec>, usize)> {
     use self::FormatSpec::*;
 
     let mut vec   = Vec::new();
@@ -56,12 +88,12 @@ fn parse_format_string(spec: &str) -> (Vec<FormatSpec>, usize) {
 
         match c {
             '{' => {
-                let col_spec = get_column_spec(&mut chars);
+                let col_spec = get_column_spec(&mut chars)?;
 
                 match col_spec.as_str() {
                     ":<" => align(&mut buf, Left),
                     ":>" => align(&mut buf, Right),
-                    _    => panic!("Table::new: bad format spec ‘{{{}}}’", col_spec),
+                    _    => return Err(Error::BadFormatSpec(col_spec)),
                 }
 
             }
@@ -70,7 +102,7 @@ fn parse_format_string(spec: &str) -> (Vec<FormatSpec>, usize) {
                 if chars.next() == Some('}') {
                     buf.push('}');
                 } else {
-                    panic!("Table::new: unexpected single ‘}’ character")
+                    return Err(Error::UnexpectedRightBrace);
                 }
             }
 
@@ -82,7 +114,7 @@ fn parse_format_string(spec: &str) -> (Vec<FormatSpec>, usize) {
         vec.push(Literal(buf));
     }
 
-    (vec, count)
+    Ok((vec, count))
 }
 
 enum InternalRow {
@@ -99,13 +131,18 @@ pub struct Table {
 
 impl Table {
     pub fn new(format_string: &str) -> Self {
-        let (format, n_columns) = parse_format_string(format_string);
-        Table {
+        Self::new_safe(format_string).unwrap_or_else(|e|
+            panic!("tabular::Table::new: {}", e))
+    }
+
+    pub fn new_safe(format_string: &str) -> Result<Self> {
+        let (format, n_columns) = parse_format_string(format_string)?;
+        Ok(Table {
             n_columns,
             format,
             rows:           vec![],
             column_widths:  vec![0; n_columns]
-        }
+        })
     }
 
     pub fn add_heading(&mut self, heading: String) -> &mut Self {
