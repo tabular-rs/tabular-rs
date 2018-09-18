@@ -30,6 +30,8 @@ impl Table {
     ///
     ///   - `{:<}` produces a left-aligned column.
     ///
+    ///   - `{:^}` produces a centered column.
+    ///
     ///   - `{:>}` produces a right-aligned column.
     ///
     ///   - `{{` produces a literal `{` character.
