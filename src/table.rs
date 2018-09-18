@@ -191,7 +191,8 @@ impl Display for Table {
             spaces.push(' ');
         }
 
-        let mt = &WidthString::default();
+        let mt_ws   = WidthString::default();
+        let is_last = |field_index| field_index + 1 < self.format.len();
 
         for row in &self.rows {
             match *row {
@@ -199,22 +200,33 @@ impl Display for Table {
                     let mut cw_iter  = self.column_widths.iter().cloned();
                     let mut row_iter = cells.iter();
 
-                    for field in 0 .. self.format.len() {
-                        match self.format[field] {
+                    for field_index in 0 .. self.format.len() {
+                        match self.format[field_index] {
                             Align(alignment) => {
-                                let cw = cw_iter.next().unwrap();
-                                let ws = row_iter.next().unwrap_or_else(|| mt);
+                                let cw      = cw_iter.next().unwrap();
+                                let ws      = row_iter.next().unwrap_or_else(|| &mt_ws);
+                                let padding = cw - ws.width();
 
                                 match alignment {
-                                    Left  => {
+                                    Left   => {
                                         f.write_str(ws.as_str())?;
-                                        if field + 1 < self.format.len() {
-                                            f.write_str(&spaces[..cw - ws.width()])?;
+                                        if is_last(field_index) {
+                                            f.write_str(&spaces[.. padding])?;
                                         }
                                     }
 
-                                    Right => {
-                                        f.write_str(&spaces[.. cw - ws.width()])?;
+                                    Center => {
+                                        let before = (padding + 1) / 2;
+                                        let after  = padding / 2;
+                                        f.write_str(&spaces[.. before])?;
+                                        f.write_str(ws.as_str())?;
+                                        if is_last(field_index) {
+                                            f.write_str(&spaces[.. after])?;
+                                        }
+                                    }
+
+                                    Right  => {
+                                        f.write_str(&spaces[.. padding])?;
                                         f.write_str(ws.as_str())?;
                                     }
                                 }

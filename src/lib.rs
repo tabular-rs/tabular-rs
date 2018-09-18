@@ -140,5 +140,24 @@ ab bc cd
     }
 
     #[test]
+    fn centering() {
+        let table = Table::new("{:<} {:^} {:>}")
+            .with_row(Row::from_cells(vec!["a", "b", "c"]))
+            .with_row(Row::from_cells(vec!["a", "bc", "d"]))
+            .with_row(Row::from_cells(vec!["a", "bcd", "e"]))
+            .with_row(Row::from_cells(vec!["a", "bcde", "f"]))
+            .with_row(Row::from_cells(vec!["a", "bcdef", "g"]));
+
+        assert_eq! ( format!("\n{}", table),
+                     r#"
+a   b   c
+a   bc  d
+a  bcd  e
+a  bcde f
+a bcdef g
+"# );
+    }
+
+    #[test]
     fn temporary() {}
 }

@@ -9,6 +9,7 @@ pub enum ColumnSpec {
 #[derive(Clone, Copy)]
 pub enum Alignment {
     Left,
+    Center,
     Right,
 }
 
@@ -20,8 +21,9 @@ pub fn row_spec_to_string(specs: &[ColumnSpec]) -> String {
 
     for spec in specs {
         match *spec {
-            Align(Left)  => result.push_str("{:<}"),
-            Align(Right) => result.push_str("{:>}"),
+            Align(Left)   => result.push_str("{:<}"),
+            Align(Center) => result.push_str("{:^}"),
+            Align(Right)  => result.push_str("{:>}"),
             Literal(ref literal) => {
                 for c in literal.chars() {
                     match c {
@@ -62,17 +64,21 @@ pub fn parse_row_spec(spec: &str) -> Result<(Vec<ColumnSpec>, usize)> {
                 Some('{') => buf.push('{'),
                 Some(':') => match chars.next() {
                     None => return Err(Error::UnclosedColumnSpec(":".to_owned())),
-                    Some('<') => match chars.next() {
-                        Some('}') => align(&mut buf, Align(Left)),
-                        Some(c) => return Err(Error::UnexpectedCharacter(c)),
-                        None => return Err(Error::UnclosedColumnSpec(":<".to_string())),
-                    },
-                    Some('>') => match chars.next() {
-                        Some('}') => align(&mut buf, Align(Right)),
-                        Some(c) => return Err(Error::UnexpectedCharacter(c)),
-                        None => return Err(Error::UnclosedColumnSpec(":>".to_string())),
-                    },
-                    Some(c) => return Err(Error::BadColumnSpec(format!(":{}", c))),
+                    Some(c) => {
+                        let alignment = match c {
+                            '<' => Left,
+                            '>' => Right,
+                            '^' => Center,
+                            _   => return Err(Error::UnexpectedCharacter(c)),
+                        };
+
+                        match chars.next() {
+                            Some('}') => align(&mut buf, Align(alignment)),
+                            Some(c) => return Err(Error::UnexpectedCharacter(c)),
+                            None => return Err(Error::UnclosedColumnSpec(format!(":{}", c))),
+
+                        }
+                    }
                 },
                 Some(c) => return Err(Error::UnexpectedCharacter(c)),
             },
