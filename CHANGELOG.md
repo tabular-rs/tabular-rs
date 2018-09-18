@@ -10,5 +10,10 @@ The format is based on [Keep a Changelog] and this project adheres to
 
 ## [Unreleased]
 
+### Added
+- `{:^}` column specifier for centering.
+
+## [0.1.0] - 2019/09/18
+
 Initial release.
 
