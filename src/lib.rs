@@ -53,13 +53,13 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 /// Type for building a [`Table`] row.
 ///
-/// Make a new one with [`Row::new()`], then add to it with [`Row::add_cell()`].
+/// Make a new one with [`Row::new()`], then add to it with [`Row::with_cell()`].
 /// Or make a complete one with [`Row::from_cells()`].
 ///
 /// [`Table`]: struct.Table.html
 /// [`Row::new()`]: struct.Row.html#method.new
 /// [`Row::from_cells()`]: struct.Row.html#method.from_cells
-/// [`Row::add_cell()`]: struct.Row.html#method.add_cell
+/// [`Row::with_cell()`]: struct.Row.html#method.with_cell
 #[derive(Clone, Default)]
 pub struct Row(Vec<WidthString>);
 
@@ -68,8 +68,13 @@ impl Row {
         Row(Vec::new())
     }
 
-    pub fn add_cell<S: Display>(mut self, value: S) -> Self {
+    pub fn add_cell<S: Display>(&mut self, value: S) -> &mut Self {
         self.0.push(WidthString::new(value));
+        self
+    }
+
+    pub fn with_cell<S: Display>(mut self, value: S) -> Self {
+        self.add_cell(value);
         self
     }
 
@@ -225,6 +230,11 @@ impl Table {
         self
     }
 
+    pub fn with_heading<S: Into<String>>(mut self, heading: S) -> Self {
+        self.add_heading(heading);
+        self
+    }
+
     pub fn add_row(&mut self, row: Row) -> &mut Self {
         let cells = row.0;
 
@@ -235,6 +245,11 @@ impl Table {
         }
 
         self.rows.push(InternalRow::Cells(cells));
+        self
+    }
+
+    pub fn with_row(mut self, row: Row) -> Self {
+        self.add_row(row);
         self
     }
 }
@@ -250,10 +265,10 @@ impl Debug for Table {
         for row in &self.rows {
             match *row {
                 InternalRow::Cells(ref row) => {
-                    write!(f, ".add_row({:?})", Row(row.clone()))?
+                    write!(f, ".with_row({:?})", Row(row.clone()))?
                 },
                 InternalRow::Heading(ref heading) => {
-                    write!(f, ".add_heading({:?})", heading)?
+                    write!(f, ".with_heading({:?})", heading)?
                 },
             }
         }
@@ -363,11 +378,11 @@ mod tests {
     fn alignment() {
         let mut table = Table::new("{:>}  ({:<}) {:<}");
         table
-            .add_row(Row::new().add_cell(1).add_cell("I").add_cell("one"))
-            .add_row(Row::new().add_cell(5).add_cell("V").add_cell("five"))
-            .add_row(Row::new().add_cell(10).add_cell("X").add_cell("ten"))
-            .add_row(Row::new().add_cell(50).add_cell("L").add_cell("fifty"))
-            .add_row(Row::new().add_cell(100).add_cell("C").add_cell("one-hundred"));
+            .add_row(Row::new().with_cell(1).with_cell("I").with_cell("one"))
+            .add_row(Row::new().with_cell(5).with_cell("V").with_cell("five"))
+            .add_row(Row::new().with_cell(10).with_cell("X").with_cell("ten"))
+            .add_row(Row::new().with_cell(50).with_cell("L").with_cell("fifty"))
+            .add_row(Row::new().with_cell(100).with_cell("C").with_cell("one-hundred"));
         assert_eq!( format!("\n{}", table),
                     r#"
   1  (I) one
@@ -384,12 +399,11 @@ mod tests {
         eprintln!("{:?}", row);
 
         let table = Table::new("{:<} {:<} {:>}")
-            .add_row(Row::from_cells(vec!["a", "b", "d"]))
-            .add_heading("This is my table")
-            .add_row(Row::from_cells(vec!["ab", "bc", "cd"]))
-            .clone();
+            .with_row(Row::from_cells(vec!["a", "b", "d"]))
+            .with_heading("This is my table")
+            .with_row(Row::from_cells(vec!["ab", "bc", "cd"]));
 
-        eprintln!("\n\n{:?}\n\n", table);
+//        eprintln!("\n\n{:?}\n\n", table);
 
         assert_eq! ( format!("\n{}", table),
                      r#"
