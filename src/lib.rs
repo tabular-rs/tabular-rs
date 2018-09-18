@@ -152,6 +152,12 @@ impl Display for Table {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         use self::FormatSpec::*;
 
+        let max_column_width = self.column_widths.iter().cloned().max().unwrap_or(0);
+        let mut spaces = String::with_capacity(max_column_width);
+        for _ in 0 .. max_column_width {
+            spaces.push(' ');
+        }
+
         for row in &self.rows {
             match row {
                 InternalRow::Cells(cells) => {
@@ -173,10 +179,7 @@ impl Display for Table {
                                 };
 
                                 if field + 1 < self.format.len() {
-                                    let remaining = cw - width;
-                                    for _ in 0 .. remaining {
-                                        f.write_str(" ")?;
-                                    }
+                                    f.write_str(&spaces[.. cw - width])?;
                                 }
                             }
 
@@ -184,18 +187,10 @@ impl Display for Table {
                                 let cw = cw_iter.next().unwrap();
                                 match row_iter.next() {
                                     Some(ws) => {
-                                        let remaining = cw - ws.width();
-                                        for _ in 0 .. remaining {
-                                            f.write_str(" ")?;
-                                        }
-
+                                        f.write_str(&spaces[.. cw - ws.width()])?;
                                         f.write_str(ws.as_str())?;
                                     },
-                                    None     => {
-                                        for _ in 0 .. cw {
-                                            f.write_str(" ")?;
-                                        }
-                                    }
+                                    None     => f.write_str(&spaces[.. cw])?,
                                 };
                             }
 
