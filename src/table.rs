@@ -41,7 +41,7 @@ impl Table {
     ///
     /// ```
     /// # use tabular::*;
-    /// let table = Table::new("{{:<}} produces ‘{:<}’ and {{:>}} produces ’{:>}’")
+    /// let table = Table::new("{{:<}} produces ‘{:<}’ and {{:>}} produces ‘{:>}’")
     ///     .with_row(Row::from_cells(["a", "bc"].iter().cloned()));
     /// ```
     pub fn new(row_spec: &str) -> Self {
