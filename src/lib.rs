@@ -1,6 +1,31 @@
 #![doc(html_root_url = "https://docs.rs/tabular/0.1.0")]
+//! Builds plain, automatically-aligned tables of monospaced text.
 //!
+//! This is basically what you if you are implementing `ls`.
 //!
+//! # Usage
+//!
+//! The number and alignment of the columns is determined by a format string
+//! passed to [`Table::new`]. Then, [`Row`]s are added to the [`Table`]
+//! using [`Table::add_row`] or [`Table::with_row`]. Each row is is constructed
+//! by [`Row::new`] or `[Row::from_cells]`
+//!
+//! ## Getting it
+//! 
+//! It's on [crates.io](https://crates.io/crates/tabular), so you can add
+//!
+//! ```toml
+//! [dependencies]
+//! tabular = "0.1.0"
+//! ```
+//!
+//! to your `Cargo.toml`.
+//!
+//! [`Row`]: struct.Row.html
+//! [`Table`]: struct.Table.html
+//! [`Table::add_row`]: struct.Table.html#method.add_row
+//! [`Table::new`]: struct.Table.html#method.new
+//! [`Table::with_row`]: struct.Table.html#method.with_row
 
 #![warn(missing_docs)]
 
