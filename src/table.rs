@@ -182,6 +182,7 @@ impl Debug for Table {
 
 impl Display for Table {
     fn fmt(&self, f: &mut Formatter) -> ::std::fmt::Result {
+        use column_spec::Alignment::*;
         use column_spec::ColumnSpec::*;
 
         let max_column_width = self.column_widths.iter().cloned().max().unwrap_or(0);
@@ -200,21 +201,23 @@ impl Display for Table {
 
                     for field in 0 .. self.format.len() {
                         match self.format[field] {
-                            Left  => {
+                            Align(alignment) => {
                                 let cw = cw_iter.next().unwrap();
                                 let ws = row_iter.next().unwrap_or_else(|| mt);
-                                f.write_str(ws.as_str())?;
 
-                                if field + 1 < self.format.len() {
-                                    f.write_str(&spaces[.. cw - ws.width()])?;
+                                match alignment {
+                                    Left  => {
+                                        f.write_str(ws.as_str())?;
+                                        if field + 1 < self.format.len() {
+                                            f.write_str(&spaces[..cw - ws.width()])?;
+                                        }
+                                    }
+
+                                    Right => {
+                                        f.write_str(&spaces[.. cw - ws.width()])?;
+                                        f.write_str(ws.as_str())?;
+                                    }
                                 }
-                            }
-
-                            Right => {
-                                let cw = cw_iter.next().unwrap();
-                                let ws = row_iter.next().unwrap_or_else(|| mt);
-                                f.write_str(&spaces[.. cw - ws.width()])?;
-                                f.write_str(ws.as_str())?;
                             }
 
                             Literal(ref s) => f.write_str(s)?,
