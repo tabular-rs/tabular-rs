@@ -24,7 +24,7 @@ pub struct Table {
 impl Table {
     /// Constructs a new table with the format of each row specified by `row_spec`.
     ///
-    /// Unlike `format!` and friends, `row_spec` is processed manually, but it uses a small
+    /// Unlike `format!` and friends, `row_spec` is processed dynamically, but it uses a small
     /// subset of the syntax to determine how columns are laid out. In particular:
     ///
     ///   - `{:<}` produces a left-aligned column.
