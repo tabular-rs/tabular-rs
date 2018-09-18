@@ -1,33 +1,7 @@
 #[cfg(feature = "unicode-width")]
 extern crate unicode_width;
 
-#[cfg(feature = "unicode-width")]
-use unicode_width::UnicodeWidthStr;
 use std::fmt::Display;
-
-struct WidthString {
-    string: String,
-    width: usize,
-}
-
-impl WidthString {
-    fn new<T: Display>(thing: T) -> Self {
-        let string = thing.to_string();
-        #[cfg(feature = "unicode-width")]
-        let width  = string.width();
-        #[cfg(not(feature = "unicode-width"))]
-        let width  = string.len();
-        WidthString { string, width }
-    }
-
-    fn width(&self) -> usize {
-        self.width
-    }
-
-    fn as_str(&self) -> &str {
-        &self.string
-    }
-}
 
 pub struct Row(Vec<WidthString>);
 
@@ -177,8 +151,8 @@ impl Display for Table {
                                 let cw    = cw_iter.next().unwrap();
                                 let width = match row_iter.next() {
                                     Some(ws) => {
-                                        f.write_str(&ws.string)?;
-                                        ws.width
+                                        f.write_str(ws.as_str())?;
+                                        ws.width()
                                     }
                                     None     => 0,
                                 };
@@ -213,6 +187,30 @@ impl Display for Table {
         }
 
         Ok(())
+    }
+}
+
+struct WidthString {
+    string: String,
+    width: usize,
+}
+
+impl WidthString {
+    fn new<T: Display>(thing: T) -> Self {
+        let string = thing.to_string();
+        #[cfg(feature = "unicode-width")]
+        let width  = unicode_width::UnicodeWidthStr::width(string.as_str());
+        #[cfg(not(feature = "unicode-width"))]
+        let width  = string.len();
+        WidthString { string, width }
+    }
+
+    fn width(&self) -> usize {
+        self.width
+    }
+
+    fn as_str(&self) -> &str {
+        &self.string
     }
 }
 
