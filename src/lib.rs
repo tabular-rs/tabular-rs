@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/tabular/0.1.0")]
+#![doc(html_root_url = "https://docs.rs/tabular/0.1.1")]
 //! Builds plain, automatically-aligned tables of monospaced text.
 //! This is basically what you want if you are implementing `ls`.
 //!
@@ -45,7 +45,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! tabular = "0.1.0"
+//! tabular = "0.1.1"
 //! ```
 //!
 //! to your `Cargo.toml`.
@@ -57,7 +57,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! tabular = { version = "0.1.0", default-features = false }
+//! tabular = { version = "0.1.1", default-features = false }
 //! ```
 //!
 //! Note that without `unicode-width`, alignment will be based on the count of the
