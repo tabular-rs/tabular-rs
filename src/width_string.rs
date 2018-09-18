@@ -1,4 +1,4 @@
-use std::fmt::{Debug, Display, Formatter};
+use std::fmt::{Debug, Formatter};
 
 #[derive(Clone)]
 pub struct WidthString {
@@ -7,7 +7,7 @@ pub struct WidthString {
 }
 
 impl WidthString {
-    pub fn new<T: Display>(thing: T) -> Self {
+    pub fn new<T: ToString>(thing: T) -> Self {
         let string = thing.to_string();
         #[cfg(feature = "unicode-width")]
         let width  = ::unicode_width::UnicodeWidthStr::width(string.as_str());
@@ -31,3 +31,8 @@ impl Debug for WidthString {
     }
 }
 
+impl Default for WidthString {
+    fn default() -> Self {
+        return WidthString { string: String::new(), width: 0, }
+    }
+}

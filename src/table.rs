@@ -1,6 +1,7 @@
 use column_spec::{ColumnSpec, parse_row_spec, row_spec_to_string};
 use error::Result;
 use row::{InternalRow, Row};
+use width_string::WidthString;
 
 use std::fmt::{Debug, Formatter, Display};
 
@@ -189,6 +190,8 @@ impl Display for Table {
             spaces.push(' ');
         }
 
+        let mt = &WidthString::default();
+
         for row in &self.rows {
             match *row {
                 InternalRow::Cells(ref cells) => {
@@ -198,29 +201,20 @@ impl Display for Table {
                     for field in 0 .. self.format.len() {
                         match self.format[field] {
                             Left  => {
-                                let cw    = cw_iter.next().unwrap();
-                                let width = match row_iter.next() {
-                                    Some(ws) => {
-                                        f.write_str(ws.as_str())?;
-                                        ws.width()
-                                    }
-                                    None     => 0,
-                                };
+                                let cw = cw_iter.next().unwrap();
+                                let ws = row_iter.next().unwrap_or_else(|| mt);
+                                f.write_str(ws.as_str())?;
 
                                 if field + 1 < self.format.len() {
-                                    f.write_str(&spaces[.. cw - width])?;
+                                    f.write_str(&spaces[.. cw - ws.width()])?;
                                 }
                             }
 
                             Right => {
                                 let cw = cw_iter.next().unwrap();
-                                match row_iter.next() {
-                                    Some(ws) => {
-                                        f.write_str(&spaces[.. cw - ws.width()])?;
-                                        f.write_str(ws.as_str())?;
-                                    },
-                                    None     => f.write_str(&spaces[.. cw])?,
-                                };
+                                let ws = row_iter.next().unwrap_or_else(|| mt);
+                                f.write_str(&spaces[.. cw - ws.width()])?;
+                                f.write_str(ws.as_str())?;
                             }
 
                             Literal(ref s) => f.write_str(s)?,
