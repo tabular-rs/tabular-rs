@@ -3,12 +3,23 @@ extern crate unicode_width;
 
 use std::fmt::Display;
 
-pub struct Row(Vec<WidthString>);
-
+/// Errors from parsing the table format string.
+///
+/// Returned by [`Table::new_safe()`].
+///
+/// [`Table::new_safe()`]: struct.Table.html#method.new_safe
 #[derive(Debug, Clone)]
 pub enum Error {
+    /// Encountered a `{` character without matching `}`.
+    ///
+    /// The string is the contents of the column specifier, not including the `{` character.
     UnclosedColumnSpec(String),
-    BadFormatSpec(String),
+    /// Did not understand the column specifiier.
+    ///
+    /// The string is the contents of the column specifier, not including the `{`
+    /// and `}` characters.
+    BadColumnSpec(String),
+    /// Encountered a `}` character without a prior matching `{` character.
     UnexpectedRightBrace,
 }
 
@@ -16,7 +27,7 @@ impl std::error::Error for Error {
     fn description(&self) -> &str {
         match *self {
             Error::UnclosedColumnSpec(_) => "unclosed column specifier",
-            Error::BadFormatSpec(_) => "bad format specifier",
+            Error::BadColumnSpec(_) => "bad format specifier",
             Error::UnexpectedRightBrace => "unexpected single ‘}’ character",
         }
     }
@@ -27,7 +38,7 @@ impl std::fmt::Display for Error {
         match *self {
             Error::UnclosedColumnSpec(ref spec) =>
                 write!(f, "unclosed column specifier: ‘{{{}’", spec),
-            Error::BadFormatSpec(ref spec) =>
+            Error::BadColumnSpec(ref spec) =>
                 write!(f, "bad format specifier: ‘{{{}}}’", spec),
             Error::UnexpectedRightBrace =>
                 f.write_str("unexpected single ‘}’ character"),
@@ -35,11 +46,30 @@ impl std::fmt::Display for Error {
     }
 }
 
+/// Type alias specializing `std::result::Result` with this crate’s [`Error`] enum.
+///
+/// [`Error`]: error.Error.html
 pub type Result<T> = std::result::Result<T, Error>;
+
+/// Type for building a [`Table`] row.
+///
+/// Make a new one with [`Row::new()`], then add to it with [`Row::add_cell()`].
+///
+/// [`Table`]: struct.Table.html
+/// [`Row::new()`]: struct.Row.html#method.new
+/// [`Row::add_cell()`]: struct.Row.html#method.add_cell
+pub struct Row(Vec<WidthString>);
 
 impl Row {
     pub fn new() -> Self {
         Row(Vec::new())
+    }
+
+    pub fn from_cells<S, I>(values: I) -> Self
+        where S: Into<String>,
+              I: IntoIterator<Item = S> {
+
+        Row(values.into_iter().map(Into::into).map(WidthString::new).collect())
     }
 
     pub fn add_cell<S: Display>(mut self, value: S) -> Self {
@@ -93,7 +123,7 @@ fn parse_format_string(spec: &str) -> Result<(Vec<FormatSpec>, usize)> {
                 match col_spec.as_str() {
                     ":<" => align(&mut buf, Left),
                     ":>" => align(&mut buf, Right),
-                    _    => return Err(Error::BadFormatSpec(col_spec)),
+                    _    => return Err(Error::BadColumnSpec(col_spec)),
                 }
 
             }
@@ -122,6 +152,15 @@ enum InternalRow {
     Heading(String),
 }
 
+/// Builder type for constructing a formatted table.
+///
+/// Construct this with [`Table::new()`] or [`Table::new_safe()`]. Then add rows
+/// to it with [`Table::add_row()`] and [`Table::add_heading()`].
+///
+/// [`Table::new_safe()`]: struct.Table.html#method.new_safe
+/// [`Table::new()`]: struct.Table.html#method.new
+/// [`Table::add_row()`]: struct.Table.html#method.add_row
+/// [`Table::add_heading()`]: struct.Table.html#method.add_heading
 pub struct Table {
     n_columns:     usize,
     format:        Vec<FormatSpec>,
@@ -219,7 +258,6 @@ impl Display for Table {
                     f.write_str(s)?;
                 }
             }
-
             f.write_str("\n")?;
         }
 
