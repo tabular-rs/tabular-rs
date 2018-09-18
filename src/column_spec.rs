@@ -51,32 +51,30 @@ pub fn parse_row_spec(spec: &str) -> Result<(Vec<ColumnSpec>, usize)> {
 
         // Should be generating this.
         match c {
-            '{' => {
-                match chars.next() {
-                    None => return Err(Error::UnclosedColumnSpec(String::new())),
-                    Some('{') => buf.push('{'),
-                    Some(':') => match chars.next() {
-                        None => return Err(Error::UnclosedColumnSpec(":".to_owned())),
-                        Some('<') => match chars.next() {
-                            Some('}') => align(&mut buf, Left),
-                            Some(c) => return Err(Error::UnexpectedCharacter(c)),
-                            None => return Err(Error::UnclosedColumnSpec(":<".to_string())),
-                        },
-                        Some('>') => match chars.next() {
-                            Some('}') => align(&mut buf, Right),
-                            Some(c) => return Err(Error::UnexpectedCharacter(c)),
-                            None => return Err(Error::UnclosedColumnSpec(":>".to_string())),
-                        },
-                        Some(c) => return Err(Error::BadColumnSpec(format!(":{}", c))),
-                    }     ,
-                    Some(c) => return Err(Error::UnexpectedCharacter(c)),
-                }
-            }
+            '{' => match chars.next() {
+                None => return Err(Error::UnclosedColumnSpec(String::new())),
+                Some('{') => buf.push('{'),
+                Some(':') => match chars.next() {
+                    None => return Err(Error::UnclosedColumnSpec(":".to_owned())),
+                    Some('<') => match chars.next() {
+                        Some('}') => align(&mut buf, Left),
+                        Some(c) => return Err(Error::UnexpectedCharacter(c)),
+                        None => return Err(Error::UnclosedColumnSpec(":<".to_string())),
+                    },
+                    Some('>') => match chars.next() {
+                        Some('}') => align(&mut buf, Right),
+                        Some(c) => return Err(Error::UnexpectedCharacter(c)),
+                        None => return Err(Error::UnclosedColumnSpec(":>".to_string())),
+                    },
+                    Some(c) => return Err(Error::BadColumnSpec(format!(":{}", c))),
+                },
+                Some(c) => return Err(Error::UnexpectedCharacter(c)),
+            },
 
             '}' => match chars.next() {
                 Some('}') => buf.push('}'),
                 _ => return Err(Error::UnexpectedRightBrace),
-            }
+            },
 
             _ => buf.push(c),
         }

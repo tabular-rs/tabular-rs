@@ -35,6 +35,8 @@ impl Table {
     ///
     ///   - `}}` produces a literal `}` character.
     ///
+    ///   - Any other appearances of `{` or `}` are errors.
+    ///
     ///   - Everything else stands for itself.
     ///
     /// # Examples
