@@ -23,9 +23,6 @@ pub struct Table {
     line_end:      String,
 }
 
-#[cfg(windows)]
-const DEFAULT_LINE_END: &'static str = "\r\n";
-#[cfg(not(windows))]
 const DEFAULT_LINE_END: &'static str = "\n";
 
 impl Table {
@@ -103,7 +100,7 @@ impl Table {
     ///             .add_heading("")
     ///             .add_heading("target/:")
     ///             .add_row(Row::new().with_cell("debug/").with_cell(672));
-    /// 
+    ///
     ///         assert_eq!( format!("{}", table),
     ///                     "./:\n\
     ///                      Cargo.lock    433\n\
@@ -116,7 +113,7 @@ impl Table {
     ///                      debug/        672\n\
     ///                      " );
     /// ```
-    /// 
+    ///
     pub fn add_heading<S: Into<String>>(&mut self, heading: S) -> &mut Self {
         self.rows.push(InternalRow::Heading(heading.into()));
         self
@@ -166,9 +163,43 @@ impl Table {
         self
     }
 
-    /// Sets the string to output at the end of every line
+    /// Sets the string to output at the end of every line.
     ///
-    /// By default, this is `"\n"` on UNIX and `"\r\n"` on Windows.
+    /// By default this is `"\n"` on all platforms, like `println!`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use tabular::*;
+    /// #[cfg(windows)]
+    /// const DEFAULT_LINE_END: &'static str = "\r\n";
+    /// #[cfg(not(windows))]
+    /// const DEFAULT_LINE_END: &'static str = "\n";
+    ///
+    /// let table = Table::new("{:>} {:<}").set_line_end(DEFAULT_LINE_END)
+    ///     .with_row(Row::new().with_cell("x").with_cell("x"))
+    ///     .with_row(Row::new().with_cell("yy").with_cell("yy"))
+    ///     .with_row(Row::new().with_cell("zzz").with_cell("zzz"));
+    ///
+    /// assert_eq!( table.to_string(),
+    ///             format!("  x x{nl} yy yy{nl}zzz zzz{nl}", nl = DEFAULT_LINE_END) );
+    /// ```
+    ///
+    /// This works better than putting the carriage return in the format string:
+    ///
+    /// ```
+    /// # use tabular::*;
+    /// let table = Table::new("{:>} {:<}\r")
+    ///     .with_row(Row::new().with_cell("x").with_cell("x"))
+    ///     .with_row(Row::new().with_cell("yy").with_cell("yy"))
+    ///     .with_row(Row::new().with_cell("zzz").with_cell("zzz"));
+    ///
+    /// assert_eq!( table.to_string(),
+    ///             format!("  x x  \r\n yy yy \r\nzzz zzz\r\n") );
+    /// ```
+    ///
+    /// Note the trailing spaces. Trailing spaces mean that if any lines are wrapped
+    /// then all lines are wrapped.
     pub fn set_line_end<S: Into<String>>(mut self, line_end: S) -> Self {
         self.line_end = line_end.into();
         self

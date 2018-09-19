@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog] and this project adheres to
 
 ## [Unreleased]
 
+### Added
+- `Table::set_line_end()` method for changing the line ending used by
+formatted tables.
+
 ### Changed
 - Centering now rounds to left rather than right; I think it looks better.
 
