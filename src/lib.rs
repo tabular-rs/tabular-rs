@@ -43,7 +43,8 @@
 //!   - The [`Table::with_header`] and [`Table::add_header`] methods add
 //!     lines that span all columns.
 //!
-//!   - The [`row!`] macro builds a fixed-size row with less syntax.
+//!   - The [`row!`] macro builds a row with a fixed number of columns
+//!     using less syntax.
 //!
 //!   - The [`Table::set_line_end`] method allows changing the line ending
 //!     to include a carriage return (or whatever you want).
