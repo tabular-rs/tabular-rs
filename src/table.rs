@@ -207,28 +207,28 @@ impl Display for Table {
                             Align(alignment) => {
                                 let cw      = cw_iter.next().unwrap();
                                 let ws      = row_iter.next().unwrap_or_else(|| &mt_ws);
-                                let padding = cw - ws.width();
+                                let needed  = cw - ws.width();
+                                let padding = &spaces[.. needed];
 
                                 match alignment {
                                     Left   => {
                                         f.write_str(ws.as_str())?;
                                         if is_last(field_index) {
-                                            f.write_str(&spaces[.. padding])?;
+                                            f.write_str(padding)?;
                                         }
                                     }
 
                                     Center => {
-                                        let before = (padding + 1) / 2;
-                                        let after  = padding / 2;
-                                        f.write_str(&spaces[.. before])?;
+                                        let (before, after) = padding.split_at(needed / 2);
+                                        f.write_str(before)?;
                                         f.write_str(ws.as_str())?;
                                         if is_last(field_index) {
-                                            f.write_str(&spaces[.. after])?;
+                                            f.write_str(after)?;
                                         }
                                     }
 
                                     Right  => {
-                                        f.write_str(&spaces[.. padding])?;
+                                        f.write_str(padding)?;
                                         f.write_str(ws.as_str())?;
                                     }
                                 }

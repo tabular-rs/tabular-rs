@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog] and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+- Centering now rounds to left rather than right; I think it looks better.
+
 ## [0.1.1] - 2018-09-18
 
 ### Added
