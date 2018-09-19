@@ -49,7 +49,7 @@ produces something like
   - The `Table::with_header()` and `Table::add_header()` methods add
     lines that span all columns.
 
-  - The [`row!`] macro builds a row with a fixed number of columns
+  - The `row!` macro builds a row with a fixed number of columns
     using less syntax.
 
   - The `Table::set_line_end()` method allows changing the line ending
