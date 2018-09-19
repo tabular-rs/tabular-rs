@@ -20,7 +20,13 @@ pub struct Table {
     format:        Vec<ColumnSpec>,
     rows:          Vec<InternalRow>,
     column_widths: Vec<usize>,
+    line_end:      String,
 }
+
+#[cfg(windows)]
+const DEFAULT_LINE_END: &'static str = "\r\n";
+#[cfg(not(windows))]
+const DEFAULT_LINE_END: &'static str = "\n";
 
 impl Table {
     /// Constructs a new table with the format of each row specified by `row_spec`.
@@ -60,13 +66,16 @@ impl Table {
     /// [`Result`]: type.Result.html
     pub fn new_safe(row_spec: &str) -> Result<Self> {
         let (format, n_columns) = parse_row_spec(row_spec)?;
+
         Ok(Table {
             n_columns,
             format,
             rows:           vec![],
-            column_widths:  vec![0; n_columns]
+            column_widths:  vec![0; n_columns],
+            line_end:       DEFAULT_LINE_END.to_owned(),
         })
     }
+
 
     /// The number of columns in the table.
     pub fn column_count(&self) -> usize {
@@ -156,6 +165,14 @@ impl Table {
         self.add_row(row);
         self
     }
+
+    /// Sets the string to output at the end of every line
+    ///
+    /// By default, this is `"\n"` on UNIX and `"\r\n"` on Windows.
+    pub fn set_line_end<S: Into<String>>(mut self, line_end: S) -> Self {
+        self.line_end = line_end.into();
+        self
+    }
 }
 
 impl Debug for Table {
@@ -165,6 +182,10 @@ impl Debug for Table {
     // It doesn't need to do either.
     fn fmt(&self, f: &mut Formatter) -> ::std::fmt::Result {
         write!(f, "Table::new({:?})", row_spec_to_string(&self.format))?;
+
+        if self.line_end != DEFAULT_LINE_END {
+            write!(f, ".set_line_end({:?})", self.line_end)?;
+        }
 
         for row in &self.rows {
             match *row {
@@ -193,8 +214,8 @@ impl Display for Table {
             spaces.push(' ');
         }
 
-        let mt_ws   = WidthString::default();
-        let is_last = |field_index| field_index + 1 < self.format.len();
+        let mt_width_string = WidthString::default();
+        let is_not_last     = |field_index| field_index + 1 < self.format.len();
 
         for row in &self.rows {
             match *row {
@@ -206,14 +227,14 @@ impl Display for Table {
                         match self.format[field_index] {
                             Align(alignment) => {
                                 let cw      = cw_iter.next().unwrap();
-                                let ws      = row_iter.next().unwrap_or_else(|| &mt_ws);
+                                let ws      = row_iter.next().unwrap_or(&mt_width_string);
                                 let needed  = cw - ws.width();
                                 let padding = &spaces[.. needed];
 
                                 match alignment {
                                     Left   => {
                                         f.write_str(ws.as_str())?;
-                                        if is_last(field_index) {
+                                        if is_not_last(field_index) {
                                             f.write_str(padding)?;
                                         }
                                     }
@@ -222,7 +243,7 @@ impl Display for Table {
                                         let (before, after) = padding.split_at(needed / 2);
                                         f.write_str(before)?;
                                         f.write_str(ws.as_str())?;
-                                        if is_last(field_index) {
+                                        if is_not_last(field_index) {
                                             f.write_str(after)?;
                                         }
                                     }
@@ -243,7 +264,7 @@ impl Display for Table {
                     f.write_str(s)?;
                 }
             }
-            f.write_str("\n")?;
+            f.write_str(&self.line_end)?;
         }
 
         Ok(())
