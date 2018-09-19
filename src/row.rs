@@ -5,29 +5,35 @@ use std::fmt::{Debug, Display, Formatter};
 /// Type for building a [`Table`] row.
 ///
 /// Make a new one with [`Row::new()`], then add to it with [`Row::with_cell()`].
-/// Or make a complete one with [`Row::from_cells()`].
+/// Or make a complete one with the [`row!()`] macro or [`Row::from_cells()`].
 ///
 /// # Examples
 ///
 /// ```
-/// # use tabular::*;
-///         let table = Table::new("{:>}  ({:<}) {:<}")
-///             .with_row(Row::new().with_cell(1).with_cell("I").with_cell("one"))
-///             .with_row(Row::new().with_cell(5).with_cell("V").with_cell("five"))
-///             .with_row(Row::new().with_cell(10).with_cell("X").with_cell("ten"))
-///             .with_row(Row::new().with_cell(50).with_cell("L").with_cell("fifty"))
-///             .with_row(Row::new().with_cell(100).with_cell("C").with_cell("one-hundred"));
-///         assert_eq!( format!("\n{}", table),
-///                     r#"
+/// #[macro_use(row)]
+/// extern crate tabular;
+///
+/// # fn main() {
+/// let table = tabular::Table::new("{:>}  ({:<}) {:<}")
+///     .with_row(row!(1, "I", "one"))
+///     .with_row(row!(5, "V", "five"))
+///     .with_row(row!(10, "X", "ten"))
+///     .with_row(row!(50, "L", "fifty"))
+///     .with_row(row!(100, "C", "one-hundred"));
+///
+/// assert_eq!( format!("\n{}", table),
+///             r#"
 ///   1  (I) one
 ///   5  (V) five
 ///  10  (X) ten
 ///  50  (L) fifty
 /// 100  (C) one-hundred
 /// "# );
+/// # }
 /// ```
 ///
 /// [`Table`]: struct.Table.html
+/// [`row!()`]: macro.row.html
 /// [`Row::new()`]: struct.Row.html#method.new
 /// [`Row::from_cells()`]: struct.Row.html#method.from_cells
 /// [`Row::with_cell()`]: struct.Row.html#method.with_cell
