@@ -38,7 +38,15 @@
 //! 1056  d  target/debug
 //! ```
 //!
-//! This crate supports Rust version 1.18.0 and later.
+//! # Other features
+//!
+//!   - The [`Table::with_header`] and [`Table::add_header`] methods add
+//!     lines that span all columns.
+//!
+//!   - The [`row!`] macro builds a fixed-size row with less syntax.
+//!
+//!   - The [`Table::set_line_end`] method allows changing the line ending
+//!     to include a carriage return (or whatever you want).
 //!
 //! # Usage
 //! 
@@ -64,6 +72,8 @@
 //! Note that without `unicode-width`, alignment will be based on the count of the
 //! `std::str::Chars` iterator.
 //!
+//! This crate supports Rust version 1.18.0 and later.
+//!
 //! # See also
 //!
 //! You may also want:
@@ -76,11 +86,15 @@
 //! similar to tabular’s in terms of building a table, but it does a lot more, including,
 //! color, borders, and CSV import.
 //!
+//! [`row!`]: macro.row.html
 //! [`Row`]: struct.Row.html
 //! [`Table`]: struct.Table.html
+//! [`Table::add_header`]: struct.Table.html#method.add_header
 //! [`Table::add_row`]: struct.Table.html#method.add_row
 //! [`Table::new`]: struct.Table.html#method.new
+//! [`Table::set_line_end`]: struct.Table.html#method.set_line_end
 //! [`Table::with_row`]: struct.Table.html#method.with_row
+//! [`Table::with_header`]: struct.Table.html#method.with_header
 
 #![warn(missing_docs)]
 
@@ -89,6 +103,7 @@ extern crate unicode_width;
 
 mod column_spec;
 mod error;
+mod macros;
 mod row;
 mod table;
 mod width_string;

@@ -44,6 +44,17 @@ produces something like
 1056  d  target/debug
 ```
 
+## Other features
+
+  - The `Table::with_header()` and `Table::add_header()` methods add
+    lines that span all columns.
+
+  - The `row!()` macro builds a fixed-size row with less syntax.
+
+  - The `Table::set_line_end()` method allows changing the line ending
+    to include a carriage return (or whatever you want).
+
+
 ## Usage
 
 It's on [crates.io](https://crates.io/crates/tabular), so you can add
