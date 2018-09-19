@@ -152,9 +152,9 @@ ab bc cd
         assert_eq! ( format!("\n{}", table),
                      r#"
 a   b   c
-a   bc  d
+a  bc   d
 a  bcd  e
-a  bcde f
+a bcde  f
 a bcdef g
 "# );
     }
