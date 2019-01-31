@@ -1,9 +1,9 @@
-use column_spec::{ColumnSpec, parse_row_spec, row_spec_to_string};
+use column_spec::{parse_row_spec, row_spec_to_string, ColumnSpec};
 use error::Result;
 use row::{InternalRow, Row};
 use width_string::WidthString;
 
-use std::fmt::{Debug, Formatter, Display};
+use std::fmt::{Debug, Display, Formatter};
 
 /// Builder type for constructing a formatted table.
 ///
@@ -16,11 +16,11 @@ use std::fmt::{Debug, Formatter, Display};
 /// [`Table::add_heading()`]: struct.Table.html#method.add_heading
 #[derive(Clone)]
 pub struct Table {
-    n_columns:     usize,
-    format:        Vec<ColumnSpec>,
-    rows:          Vec<InternalRow>,
+    n_columns: usize,
+    format: Vec<ColumnSpec>,
+    rows: Vec<InternalRow>,
     column_widths: Vec<usize>,
-    line_end:      String,
+    line_end: String,
 }
 
 const DEFAULT_LINE_END: &'static str = "\n";
@@ -53,8 +53,8 @@ impl Table {
     ///     .with_row(Row::from_cells(["a", "bc"].iter().cloned()));
     /// ```
     pub fn new(row_spec: &str) -> Self {
-        Self::new_safe(row_spec).unwrap_or_else(|e: super::error::Error|
-            panic!("tabular::Table::new: {}", e))
+        Self::new_safe(row_spec)
+            .unwrap_or_else(|e: super::error::Error| panic!("tabular::Table::new: {}", e))
     }
 
     /// Like [`new`], but returns a [`Result`] instead of panicking if parsing `row_spec` fails.
@@ -67,12 +67,11 @@ impl Table {
         Ok(Table {
             n_columns,
             format,
-            rows:           vec![],
-            column_widths:  vec![0; n_columns],
-            line_end:       DEFAULT_LINE_END.to_owned(),
+            rows: vec![],
+            column_widths: vec![0; n_columns],
+            line_end: DEFAULT_LINE_END.to_owned(),
         })
     }
-
 
     /// The number of columns in the table.
     pub fn column_count(&self) -> usize {
@@ -220,13 +219,9 @@ impl Debug for Table {
 
         for row in &self.rows {
             match *row {
-                InternalRow::Cells(ref row) => {
-                    write!(f, ".with_row({:?})", Row(row.clone()))?
-                },
+                InternalRow::Cells(ref row) => write!(f, ".with_row({:?})", Row(row.clone()))?,
 
-                InternalRow::Heading(ref heading) => {
-                    write!(f, ".with_heading({:?})", heading)?
-                },
+                InternalRow::Heading(ref heading) => write!(f, ".with_heading({:?})", heading)?,
             }
         }
 
@@ -241,29 +236,29 @@ impl Display for Table {
 
         let max_column_width = self.column_widths.iter().cloned().max().unwrap_or(0);
         let mut spaces = String::with_capacity(max_column_width);
-        for _ in 0 .. max_column_width {
+        for _ in 0..max_column_width {
             spaces.push(' ');
         }
 
         let mt_width_string = WidthString::default();
-        let is_not_last     = |field_index| field_index + 1 < self.format.len();
+        let is_not_last = |field_index| field_index + 1 < self.format.len();
 
         for row in &self.rows {
             match *row {
                 InternalRow::Cells(ref cells) => {
-                    let mut cw_iter  = self.column_widths.iter().cloned();
+                    let mut cw_iter = self.column_widths.iter().cloned();
                     let mut row_iter = cells.iter();
 
-                    for field_index in 0 .. self.format.len() {
+                    for field_index in 0..self.format.len() {
                         match self.format[field_index] {
                             Align(alignment) => {
-                                let cw      = cw_iter.next().unwrap();
-                                let ws      = row_iter.next().unwrap_or(&mt_width_string);
-                                let needed  = cw - ws.width();
-                                let padding = &spaces[.. needed];
+                                let cw = cw_iter.next().unwrap();
+                                let ws = row_iter.next().unwrap_or(&mt_width_string);
+                                let needed = cw - ws.width();
+                                let padding = &spaces[..needed];
 
                                 match alignment {
-                                    Left   => {
+                                    Left => {
                                         f.write_str(ws.as_str())?;
                                         if is_not_last(field_index) {
                                             f.write_str(padding)?;
@@ -279,7 +274,7 @@ impl Display for Table {
                                         }
                                     }
 
-                                    Right  => {
+                                    Right => {
                                         f.write_str(padding)?;
                                         f.write_str(ws.as_str())?;
                                     }
@@ -301,4 +296,3 @@ impl Display for Table {
         Ok(())
     }
 }
-

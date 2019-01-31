@@ -38,7 +38,7 @@ use std::fmt::{Debug, Display, Formatter};
 /// [`Row::from_cells()`]: struct.Row.html#method.from_cells
 /// [`Row::with_cell()`]: struct.Row.html#method.with_cell
 #[derive(Clone, Default)]
-pub struct Row(pub (crate) Vec<WidthString>);
+pub struct Row(pub(crate) Vec<WidthString>);
 
 impl Row {
     /// Makes a new, empty table row.
@@ -123,12 +123,17 @@ impl Row {
     /// });
     /// ```
     pub fn from_cells<S, I>(values: I) -> Self
-        where S: Into<String>,
-              I: IntoIterator<Item = S> {
-
-        Row(values.into_iter().map(Into::into).map(WidthString::new).collect())
+    where
+        S: Into<String>,
+        I: IntoIterator<Item = S>,
+    {
+        Row(values
+            .into_iter()
+            .map(Into::into)
+            .map(WidthString::new)
+            .collect())
     }
-    
+
     /// The number of cells in this row.
     ///
     /// # Examples
@@ -182,4 +187,3 @@ pub enum InternalRow {
     Cells(Vec<WidthString>),
     Heading(String),
 }
-
