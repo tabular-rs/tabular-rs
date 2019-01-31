@@ -23,7 +23,7 @@ pub struct Table {
     line_end: String,
 }
 
-const DEFAULT_LINE_END: &'static str = "\n";
+const DEFAULT_LINE_END: &str = "\n";
 
 impl Table {
     /// Constructs a new table with the format of each row specified by `row_spec`.
