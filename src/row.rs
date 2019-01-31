@@ -169,6 +169,11 @@ impl Row {
     pub fn len(&self) -> usize {
         self.0.len()
     }
+
+    /// Whether the row is empty
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
 }
 
 impl Debug for Row {

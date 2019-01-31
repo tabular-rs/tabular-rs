@@ -33,6 +33,9 @@ impl Debug for WidthString {
 
 impl Default for WidthString {
     fn default() -> Self {
-        return WidthString { string: String::new(), width: 0, }
+        WidthString {
+            string: String::new(),
+            width: 0,
+        }
     }
 }
