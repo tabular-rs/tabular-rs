@@ -8,6 +8,7 @@ readme = "README.md"
 license = "MIT/Apache-2.0"
 keywords = ["tables", "formatting", "alignment", "text", "cli"]
 categories = ["value-formatting"]
+edition = "2018"
 
 [features]
 default = ["unicode-width"]

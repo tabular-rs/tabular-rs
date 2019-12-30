@@ -1,4 +1,5 @@
-use ::error::*;
+use crate::error::*;
+use self::{Alignment::*, ColumnSpec::*};
 
 #[derive(Clone)]
 pub enum ColumnSpec {
@@ -12,9 +13,6 @@ pub enum Alignment {
     Center,
     Right,
 }
-
-use self::Alignment::*;
-use self::ColumnSpec::*;
 
 pub fn row_spec_to_string(specs: &[ColumnSpec]) -> String {
     let mut result = String::new();
@@ -40,8 +38,6 @@ pub fn row_spec_to_string(specs: &[ColumnSpec]) -> String {
 }
 
 pub fn parse_row_spec(spec: &str) -> Result<(Vec<ColumnSpec>, usize)> {
-    use self::ColumnSpec::*;
-
     let mut vec   = Vec::new();
     let mut count = 0;
     let mut buf   = String::new();
