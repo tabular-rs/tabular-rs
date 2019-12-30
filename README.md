@@ -62,7 +62,7 @@ It's on [crates.io](https://crates.io/crates/tabular), so you can add
 
 ```toml
 [dependencies]
-tabular = "0.1.3"
+tabular = "0.1.4"
 ```
 
 to your `Cargo.toml`.
@@ -73,7 +73,7 @@ it off with:
 
 ```toml
 [dependencies]
-tabular = { version = "0.1.3", default-features = false }
+tabular = { version = "0.1.4", default-features = false }
 ```
 
 Note that without `unicode-width`, alignment will be based on the count of the

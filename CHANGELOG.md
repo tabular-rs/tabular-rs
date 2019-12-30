@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog] and this project adheres to
 [Keep a Changelog]: http://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: http://semver.org/spec/v2.0.0.html
 
-## [Unreleased]
+## [0.1.4] - 2019-12-29
 
 ### Changed
 - Oldest supported Rust version is now 1.31.0.
