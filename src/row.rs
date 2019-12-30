@@ -103,7 +103,7 @@ impl Row {
     ///         let row_spec: String =
     ///              std::iter::repeat("{:>} ".chars()).take(ncols).flat_map(|x| x).collect();
     ///
-    ///         let mut table = Table::new(row_spec.trim_right());
+    ///         let mut table = Table::new(row_spec.trim_end());
     ///
     ///         for row_index in 0 .. self.height {
     ///             table.add_row(Row::from_cells(
@@ -148,7 +148,7 @@ impl Row {
     ///        row_spec.push_str("{:>} ");
     ///    }
     ///
-    ///    let mut table = Table::new(row_spec.trim_right());
+    ///    let mut table = Table::new(row_spec.trim_end());
     ///
     ///    for row in matrix {
     ///        let mut table_row = Row::from_cells(row.iter().map(ToString::to_string));
