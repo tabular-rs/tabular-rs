@@ -1,7 +1,9 @@
-use column_spec::{parse_row_spec, row_spec_to_string, ColumnSpec};
-use error::Result;
-use row::{InternalRow, Row};
-use width_string::WidthString;
+use crate::{
+    column_spec::{ColumnSpec, parse_row_spec, row_spec_to_string},
+    error::Result,
+    row::{InternalRow, Row},
+    width_string::WidthString,
+};
 
 use std::fmt::{Debug, Display, Formatter};
 
@@ -231,8 +233,8 @@ impl Debug for Table {
 
 impl Display for Table {
     fn fmt(&self, f: &mut Formatter) -> ::std::fmt::Result {
-        use column_spec::Alignment::*;
-        use column_spec::ColumnSpec::*;
+        use crate::column_spec::Alignment::*;
+        use crate::column_spec::ColumnSpec::*;
 
         let max_column_width = self.column_widths.iter().cloned().max().unwrap_or(0);
         let mut spaces = String::with_capacity(max_column_width);
