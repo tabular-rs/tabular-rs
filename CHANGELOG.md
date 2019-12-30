@@ -8,9 +8,14 @@ The format is based on [Keep a Changelog] and this project adheres to
 [Keep a Changelog]: http://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: http://semver.org/spec/v2.0.0.html
 
+## [Unreleased]
+
+### Changed
+- Oldest supported Rust version is now 1.31.0.
+
 ## [0.1.3] - 2019-12-29
 
-### Updated
+### Changed
 - No longer depends on deprecated `str::trim_right` method.
 
 ## [0.1.2] - 2018-09-18
