@@ -66,7 +66,7 @@ impl Row {
     ///     }
     /// }
     /// ```
-    pub fn with_cell<S: Display>(mut self, value: S) -> Self {
+    pub fn with_cell<S>(mut self, value: S) -> Self where S: Into<WidthString> {
         self.add_cell(value);
         self
     }
@@ -78,8 +78,8 @@ impl Row {
     ///
     /// [`with_cell`]: #method.with_cell
     /// [`len`]: #method.len
-    pub fn add_cell<S: Display>(&mut self, value: S) -> &mut Self {
-        self.0.push(WidthString::new(value));
+    pub fn add_cell<S: Into<WidthString>>(&mut self, value: S) -> &mut Self {
+        self.0.push(value.into());
         self
     }
 
@@ -126,7 +126,7 @@ impl Row {
         where S: Into<String>,
               I: IntoIterator<Item = S> {
 
-        Row(values.into_iter().map(Into::into).map(WidthString::new).collect())
+        Row(values.into_iter().map(Into::into).map(|s| s.into()).collect())
     }
     
     /// The number of cells in this row.

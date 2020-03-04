@@ -118,6 +118,26 @@ pub use crate::{
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fmt::{Display, Formatter};
+
+    struct Custom {
+        field: String,
+    }
+
+    impl From<Custom> for crate::width_string::WidthString {
+        fn from(c: Custom) -> Self {
+            Self::new("foo", 20)
+        }
+    }
+
+    #[test]
+    fn custom_struct() {
+        let mut table = Table::new("{:>}");
+        let c = Custom { field: "foo".to_string() };
+        let mut row = Row::new();
+        row.add_cell(c);
+        table.add_row(row);
+        assert_eq!(format!("\n{}", table), r#"foo"#); }
 
     #[test]
     fn alignment() {
@@ -128,14 +148,14 @@ mod tests {
             .add_row(Row::new().with_cell(10).with_cell("X").with_cell("ten"))
             .add_row(Row::new().with_cell(50).with_cell("L").with_cell("fifty"))
             .add_row(Row::new().with_cell(100).with_cell("C").with_cell("one-hundred"));
-        assert_eq!( format!("\n{}", table),
-                    r#"
+        assert_eq!(format!("\n{}", table),
+                   r#"
   1  (I) one
   5  (V) five
  10  (X) ten
  50  (L) fifty
 100  (C) one-hundred
-"# );
+"#);
     }
 
     #[test]
@@ -150,12 +170,12 @@ mod tests {
 
 //        eprintln!("\n\n{:?}\n\n", table);
 
-        assert_eq! ( format!("\n{}", table),
-                     r#"
+        assert_eq!(format!("\n{}", table),
+                   r#"
 a  b   d
 This is my table
 ab bc cd
-"# );
+"#);
     }
 
     #[test]
@@ -167,18 +187,16 @@ ab bc cd
             .with_row(Row::from_cells(vec!["a", "bcde", "f"]))
             .with_row(Row::from_cells(vec!["a", "bcdef", "g"]));
 
-        assert_eq! ( format!("\n{}", table),
-                     r#"
+        assert_eq!(format!("\n{}", table),
+                   r#"
 a   b   c
 a  bc   d
 a  bcd  e
 a bcde  f
 a bcdef g
-"# );
+"#);
     }
 
     #[test]
-    fn temporary() {
-
-    }
+    fn temporary() {}
 }
