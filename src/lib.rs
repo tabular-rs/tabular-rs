@@ -136,7 +136,7 @@ mod tests {
         let c = Custom { field: "foo".to_string() };
         let mut row = Row::new();
         table.add_row(row.with_cell(c));
-        assert_eq!(format!("\n{}", table), r#"foo"#);
+        assert_eq!(format!("{}", table), "foo\n");
     }
 
     #[test]
