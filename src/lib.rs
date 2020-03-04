@@ -149,7 +149,7 @@ mod tests {
             .add_row(Row::new().with_cell(50).with_cell("L").with_cell("fifty"))
             .add_row(Row::new().with_cell(100).with_cell("C").with_cell("one-hundred"));
         assert_eq!(format!("\n{}", table),
-                   r#"
+r#"
   1  (I) one
   5  (V) five
  10  (X) ten
@@ -171,7 +171,7 @@ mod tests {
 //        eprintln!("\n\n{:?}\n\n", table);
 
         assert_eq!(format!("\n{}", table),
-                   r#"
+r#"
 a  b   d
 This is my table
 ab bc cd
@@ -188,7 +188,7 @@ ab bc cd
             .with_row(Row::from_cells(vec!["a", "bcdef", "g"]));
 
         assert_eq!(format!("\n{}", table),
-                   r#"
+r#"
 a   b   c
 a  bc   d
 a  bcd  e
