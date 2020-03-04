@@ -135,9 +135,9 @@ mod tests {
         let mut table = Table::new("{:>}");
         let c = Custom { field: "foo".to_string() };
         let mut row = Row::new();
-        row.add_cell(c);
-        table.add_row(row);
-        assert_eq!(format!("\n{}", table), r#"foo"#); }
+        table.add_row(row.with_cell(c));
+        assert_eq!(format!("\n{}", table), r#"foo"#);
+    }
 
     #[test]
     fn alignment() {

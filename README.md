@@ -11,8 +11,18 @@ This is basically what you want if you are implementing `ls`.
 ## Example
 
 ```rust
+use console::style;
 use tabular::{Table, Row};
 use std::path::Path;
+
+struct TerminalColored(String);
+
+impl From<TerminalColored(String)> for WidthString {
+    fn from(c: TerminalColored(String)) -> WidthString {
+        let styled = style(c.0.as_str()).cyan();
+        Self::new(styled.as_str(), console::measure_text_width(styled))
+    }
+}
 
 fn ls(dir: &Path) -> ::std::io::Result<()> {
     let mut table = Table::new("{:>}  {:<}{:<}  {:<}");
