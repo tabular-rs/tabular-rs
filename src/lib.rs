@@ -107,7 +107,7 @@ mod error;
 mod macros;
 mod row;
 mod table;
-mod width_string;
+pub mod width_string;
 
 pub use crate::{
     error::{Error, Result},
