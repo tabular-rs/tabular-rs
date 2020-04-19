@@ -1,7 +1,7 @@
 /// A macro for building a [`Row`].
 ///
 /// `row!(A, B, C)` is equivalent to
-/// `Row::new().with_cell(A).with_cell(B).with_cell(B)`.
+/// `Row::new().with_cell(A).with_cell(B).with_cell(C)`.
 ///
 /// # Examples
 ///
