@@ -143,7 +143,7 @@ impl Table {
     pub fn add_row(&mut self, row: Row) -> &mut Self {
         let cells = row.0;
 
-        assert_eq!(cells.len(), self.n_columns);
+        assert_eq!(cells.len(), self.n_columns, "Number of columns in table and row don't match");
 
         for (width, s) in self.column_widths.iter_mut().zip(cells.iter()) {
             *width = ::std::cmp::max(*width, s.width());
