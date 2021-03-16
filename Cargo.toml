@@ -14,4 +14,8 @@ edition = "2018"
 default = ["unicode-width"]
 
 [dependencies]
+strip-ansi-escapes = "0.1.0"
 unicode-width = { version = "0.1.5", optional = true }
+
+[dev-dependencies]
+colored = "2.0.0"
