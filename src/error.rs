@@ -34,14 +34,14 @@ impl ::std::error::Error for Error {
 impl ::std::fmt::Display for Error {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match *self {
-            Error::UnclosedColumnSpec(ref spec) =>
-                write!(f, "unclosed column specifier: {:?}", spec),
-            Error::BadColumnSpec(ref spec) =>
-                write!(f, "bad format specifier: {:?}", spec),
-            Error::UnexpectedRightBrace =>
-                f.write_str("unexpected single '}' character"),
-            Error::UnexpectedCharacter(c) =>
+            Error::UnclosedColumnSpec(ref spec) => {
+                write!(f, "unclosed column specifier: {:?}", spec)
+            }
+            Error::BadColumnSpec(ref spec) => write!(f, "bad format specifier: {:?}", spec),
+            Error::UnexpectedRightBrace => f.write_str("unexpected single '}' character"),
+            Error::UnexpectedCharacter(c) => {
                 write!(f, "unexpected character in column specifier: {:?}", c)
+            }
         }
     }
 }
