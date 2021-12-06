@@ -6,8 +6,7 @@
 /// # Examples
 ///
 /// ```
-/// #[macro_use(row)]
-/// extern crate tabular;
+/// use tabular::row;
 ///
 /// # fn main() {
 /// let table = tabular::Table::new("{:>}  {:<}  {:<}")
@@ -48,8 +47,7 @@ macro_rules! row {
 /// # Examples
 ///
 /// ```
-/// #[macro_use(row, table)]
-/// extern crate tabular;
+/// use tabular::{row, table};
 ///
 /// # fn main() {
 /// let table = table!("{:>}  {:<}  {:<}",

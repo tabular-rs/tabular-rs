@@ -99,9 +99,6 @@
 
 #![warn(missing_docs)]
 
-#[cfg(feature = "unicode-width")]
-extern crate unicode_width;
-
 mod column_spec;
 mod error;
 mod macros;

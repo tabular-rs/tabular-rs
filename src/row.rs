@@ -10,8 +10,7 @@ use std::fmt::{Debug, Display, Formatter};
 /// # Examples
 ///
 /// ```
-/// #[macro_use(row)]
-/// extern crate tabular;
+/// use tabular::row;
 ///
 /// # fn main() {
 /// let table = tabular::Table::new("{:>}  ({:<}) {:<}")
