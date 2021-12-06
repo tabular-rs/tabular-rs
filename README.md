@@ -79,7 +79,7 @@ tabular = { version = "0.1.4", default-features = false }
 Note that without `unicode-width`, alignment will be based on the count of the
 `std::str::Chars` iterator.
 
-This crate supports Rust version 1.31.0 and later.
+This crate supports Rust version 1.46.0 and later.
 
 ## See also
 
