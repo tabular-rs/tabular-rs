@@ -47,10 +47,7 @@ pub fn parse_row_spec(spec: &str) -> Result<(Vec<ColumnSpec>, usize)> {
     while let Some(c) = chars.next() {
         let mut align = |buf: &mut String, col_spec: ColumnSpec| {
             if !buf.is_empty() {
-                // Minimum supported Rust version does not have
-                // std::mem::take.
-                #[allow(clippy::mem_replace_with_default)]
-                vec.push(Literal(std::mem::replace(buf, String::new())));
+                vec.push(Literal(std::mem::take(buf)));
             }
             vec.push(col_spec);
             count += 1;
