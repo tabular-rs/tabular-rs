@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog] and this project adheres to
 - Methods `Row::with_cell`, `Table::width_heading`,
 `Table::with_row`, and `Table::set_line_end` now have the
 `#[must_use]` attribute.
+- MSRV bumped to 1.46.
 
 ## [0.1.4] - 2019-12-29
 
@@ -43,4 +44,3 @@ formatted tables.
 ## [0.1.0] - 2019/09/18
 
 Initial release.
-
