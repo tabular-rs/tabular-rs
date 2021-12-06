@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog] and this project adheres to
 
 ## [Unreleased]
 
+### Added
+- `Row::with_ansi_cell` and `add_ansi_cell` add cells that potentially have
+  ANSI color codes in them; the color codes are stripped out while computing
+  the width.
+- `Row::with_custom_width_cell` and `add_custom_width_cell` add cells with a
+  custom width.
+
 ### Changed
 - Methods `Row::with_cell`, `Table::width_heading`,
 `Table::with_row`, and `Table::set_line_end` now have the
