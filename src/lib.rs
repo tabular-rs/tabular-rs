@@ -42,7 +42,7 @@
 //!
 //! # Other features
 //!
-//!   - The [`Table::with_header`] and [`Table::add_header`] methods add
+//!   - The [`Table::with_heading`] and [`Table::add_heading`] methods add
 //!     lines that span all columns.
 //!
 //!   - The [`row!`] macro builds a row with a fixed number of columns
@@ -51,7 +51,11 @@
 //!   - The [`Table::set_line_end`] method allows changing the line ending
 //!     to include a carriage return (or whatever you want).
 //!
-//! # Usage
+//!   - With the `ansi-cell` feature enabled, the [`Row::with_ansi_cell`] and [`Row::add_ansi_cell`]
+//!     methods can be used to add cells with ANSI color codes, and still have their widths be
+//!     computed correctly.
+//!
+//! ## Usage
 //!
 //! It's on [crates.io](https://crates.io/crates/tabular), so you can add
 //!
@@ -62,20 +66,25 @@
 //!
 //! to your `Cargo.toml`.
 //!
+//! ## Features
 //!
-//! Feature `unicode-width` is enabled be default; it depends on the
-//! [unicode-width](https://crates.io/crates/unicode-width) crate. You can turn
-//! it off with:
+//! * `unicode-width`: enabled by default; depends on the
+//! [unicode-width](https://crates.io/crates/unicode-width) crate.
 //!
-//! ```toml
-//! [dependencies]
-//! tabular = { version = "0.1.4", default-features = false }
-//! ```
+//!    With the `unicode-width` feature enabled, default alignment is based on
+//!    [Unicode Standard Annex #11], with characters in the Ambiguous category considered to
+//!    be 1 column wide.
 //!
-//! Note that without `unicode-width`, alignment will be based on the count of the
-//! `std::str::Chars` iterator.
+//!    Without it, default alignment is based on the count of the `std::str::Chars` iterator.
 //!
-//! This crate supports Rust version 1.46.0 and later.
+//! * `ansi-cell`: disabled by default; depends on the
+//!   [strip-ansi-escapes](https://crates.io/crates/strip-ansi-escapes) crate.
+//!   Provides the `with_ansi_cell` and `add_ansi_cell` methods.
+//!
+//! ## Minimum supported Rust version
+//!
+//! The minimum supported Rust version (MSRV) of this crate is **Rust 1.46.0**.
+//! The MSRV may be bumped in a patch release.
 //!
 //! # See also
 //!
@@ -88,18 +97,9 @@
 //! - [prettytable](https://crates.io/crates/prettytable-rs) — This has an API more
 //! similar to tabular’s in terms of building a table, but it does a lot more, including,
 //! color, borders, and CSV import.
-//!
-//! [`row!`]: macro.row.html
-//! [`Row`]: struct.Row.html
-//! [`Table`]: struct.Table.html
-//! [`Table::add_header`]: struct.Table.html#method.add_header
-//! [`Table::add_row`]: struct.Table.html#method.add_row
-//! [`Table::new`]: struct.Table.html#method.new
-//! [`Table::set_line_end`]: struct.Table.html#method.set_line_end
-//! [`Table::with_row`]: struct.Table.html#method.with_row
-//! [`Table::with_header`]: struct.Table.html#method.with_header
 
 #![warn(missing_docs)]
+#![cfg_attr(doc_cfg, feature(doc_auto_cfg))]
 
 mod column_spec;
 mod error;
