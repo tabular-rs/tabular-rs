@@ -1,3 +1,6 @@
+// Copyright (c) tabular-rs Contributors
+// SPDX-License-Identifier: MIT OR Apache-2.0
+
 /// A macro for building a [`Row`].
 ///
 /// `row!(A, B, C)` is equivalent to

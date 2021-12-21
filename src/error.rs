@@ -1,3 +1,6 @@
+// Copyright (c) tabular-rs Contributors
+// SPDX-License-Identifier: MIT OR Apache-2.0
+
 /// Errors from parsing the table format string.
 ///
 /// Returned by [`Table::new_safe()`].
