@@ -1,3 +1,6 @@
+// Copyright (c) tabular-rs Contributors
+// SPDX-License-Identifier: MIT OR Apache-2.0
+
 //! Builds plain, automatically-aligned tables of monospaced text.
 //! This is basically what you want if you are implementing `ls`.
 //!

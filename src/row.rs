@@ -1,3 +1,6 @@
+// Copyright (c) tabular-rs Contributors
+// SPDX-License-Identifier: MIT OR Apache-2.0
+
 use super::width_string::WidthString;
 
 use std::fmt::{Debug, Display, Formatter};

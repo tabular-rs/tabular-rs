@@ -1,3 +1,6 @@
+// Copyright (c) tabular-rs Contributors
+// SPDX-License-Identifier: MIT OR Apache-2.0
+
 use crate::{
     column_spec::{parse_row_spec, row_spec_to_string, ColumnSpec},
     error::Result,
