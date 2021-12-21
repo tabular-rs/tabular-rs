@@ -68,7 +68,7 @@ produces something like
 
 ## Other features
 
-  - The `Table::with_header()` and `Table::add_header()` methods add
+  - The `Table::with_heading()` and `Table::add_heading()` methods add
     lines that span all columns.
 
   - The `row!` macro builds a row with a fixed number of columns
@@ -77,6 +77,12 @@ produces something like
   - The `Table::set_line_end()` method allows changing the line ending
     to include a carriage return (or whatever you want).
 
+  - With the `ansi-cell` feature enabled, the `Row::with_ansi_cell` and `Row::add_ansi_cell` methods can be
+    used to add cells with ANSI color codes, and still have their widths be
+    computed correctly.
+
+  - The `Row::with_custom_width_cell` and `Row::add_custom_width_cell` methods
+    can be used to customize alignment precisely.
 
 ## Usage
 
@@ -89,19 +95,21 @@ tabular = "0.1.4"
 
 to your `Cargo.toml`.
 
-Feature `unicode-width` is enabled be default; it depends on the
-[unicode-width](https://crates.io/crates/unicode-width) crate. You can turn 
-it off with:
+## Features
 
-```toml
-[dependencies]
-tabular = { version = "0.1.4", default-features = false }
-```
+* `unicode-width`: enabled by default; depends on the
+[unicode-width](https://crates.io/crates/unicode-width) crate.
 
-Note that without `unicode-width`, alignment will be based on the count of the
-`std::str::Chars` iterator.
+    With the `unicode-width` feature enabled, default alignment is based on [Unicode Standard Annex #11], with characters in the Ambiguous category considered to be 1 column wide.
 
-This crate supports Rust version 1.46.0 and later.
+    Without it, default alignment is based on the count of the `std::str::Chars` iterator.
+
+* `ansi-cell`: disabled by default; depends on the [strip-ansi-escapes](https://crates.io/crates/strip-ansi-escapes) crate. Provides the `with_ansi_cell` and `add_ansi_cell` methods.
+
+## Minimum supported Rust version
+
+The minimum supported Rust version (MSRV) of this crate is **Rust 1.46.0**.
+The MSRV may be bumped in a patch release.
 
 ## See also
 

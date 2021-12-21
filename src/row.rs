@@ -119,7 +119,7 @@ impl Row {
 
     /// Adds a cell to this table row with a custom width.
     ///
-    /// Similar to [`with_custom_width_cell`], except it returns `&mut Self` rather than `Self`.
+    /// Similar to [`Self::with_custom_width_cell`], except it returns `&mut Self` rather than `Self`.
     pub fn add_custom_width_cell<S: Display>(&mut self, value: S, width: usize) -> &mut Self {
         self.0.push(WidthString::custom_width(value, width));
         self
