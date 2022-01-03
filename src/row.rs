@@ -66,6 +66,7 @@ impl Row {
     ///     }
     /// }
     /// ```
+    #[must_use]
     pub fn with_cell<S: Display>(mut self, value: S) -> Self {
         self.add_cell(value);
         self

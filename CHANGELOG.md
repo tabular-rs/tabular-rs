@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog] and this project adheres to
 [Keep a Changelog]: http://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: http://semver.org/spec/v2.0.0.html
 
+## [Unreleased]
+
+### Changed
+- Methods `Row::with_cell`, `Table::width_heading`,
+`Table::with_row`, and `Table::set_line_end` now have the
+`#[must_use]` attribute.
+
 ## [0.1.4] - 2019-12-29
 
 ### Changed

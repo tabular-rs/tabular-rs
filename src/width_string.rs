@@ -1,12 +1,13 @@
 use std::fmt::{Debug, Formatter};
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct WidthString {
     string: String,
     width: usize,
 }
 
 impl WidthString {
+    #[allow(clippy::needless_pass_by_value)]
     pub fn new<T: ToString>(thing: T) -> Self {
         let string = thing.to_string();
         #[cfg(feature = "unicode-width")]
@@ -28,14 +29,5 @@ impl WidthString {
 impl Debug for WidthString {
     fn fmt(&self, f: &mut Formatter) -> ::std::fmt::Result {
         write!(f, "{:?}", self.string)
-    }
-}
-
-impl Default for WidthString {
-    fn default() -> Self {
-        WidthString {
-            string: String::new(),
-            width: 0,
-        }
     }
 }

@@ -124,6 +124,7 @@ impl Table {
     /// Convenience function for calling [`add_heading`].
     ///
     /// [`add_heading`]: #method.add_heading
+    #[must_use]
     pub fn with_heading<S: Into<String>>(mut self, heading: S) -> Self {
         self.add_heading(heading);
         self
@@ -160,6 +161,7 @@ impl Table {
     /// The same as [`add_row`].
     ///
     /// [`add_row`]: #method.add_row
+    #[must_use]
     pub fn with_row(mut self, row: Row) -> Self {
         self.add_row(row);
         self
@@ -202,6 +204,7 @@ impl Table {
     ///
     /// Note the trailing spaces. Trailing spaces mean that if any lines are wrapped
     /// then all lines are wrapped.
+    #[must_use]
     pub fn set_line_end<S: Into<String>>(mut self, line_end: S) -> Self {
         self.line_end = line_end.into();
         self
