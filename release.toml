@@ -5,3 +5,12 @@ pre-release-replacements = [
   { file = "src/lib.rs", search = "version = \"[0-9.]*\"", replace = "version = \"{{version}}\"" },
   { file = "CHANGELOG.md", search = "\\[Unreleased\\]", replace = "[{{version}}] - {{date}}" },
 ]
+
+# tabular uses this scheme for tag names.
+tag-name = "{{version}}"
+
+# Disable dev-version because it makes patching harder.
+dev-version = false
+
+# Publishing will be performed by GitHub CI.
+publish = false
