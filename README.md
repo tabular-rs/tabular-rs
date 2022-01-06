@@ -25,7 +25,7 @@
   <https://img.shields.io/badge/license-Apache_2.0-blue.svg>
 
 [Documentation: latest release]:
-  <https://img.shields.io/docsrs/tabular>
+  <https://img.shields.io/docsrs/tabular.svg>
 
 Builds plain, automatically-aligned tables of monospaced text.
 This is basically what you want if you are implementing `ls`.
