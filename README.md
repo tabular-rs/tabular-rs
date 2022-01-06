@@ -4,6 +4,7 @@
 [![Crates.io]][crate]
 [![License: MIT]](LICENSE-MIT)
 [![License: Apache 2.0]](LICENSE-APACHE)
+[![Documentation (latest release)]](https://docs.rs/tabular/latest)
 
 [Build Status]:
   <https://github.com/tov/tabular-rs/actions/workflows/ci.yml/badge.svg>  
@@ -22,6 +23,9 @@
 
 [License: Apache 2.0]:
   <https://img.shields.io/badge/license-Apache_2.0-blue.svg>
+
+[Documentation: latest release]:
+  <https://img.shields.io/docsrs/tabular>
 
 Builds plain, automatically-aligned tables of monospaced text.
 This is basically what you want if you are implementing `ls`.
