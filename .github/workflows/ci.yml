@@ -69,7 +69,7 @@ jobs:
       matrix:
         rust:
           - stable
-          - 1.46.0
+          # Don't run clippy on the MSRV because 1.46 has a bug in its needless_doctest_main detection.
         flags:
           - ""
           - --no-default-features
