@@ -24,7 +24,7 @@
 [License: Apache 2.0]:
   <https://img.shields.io/badge/license-Apache_2.0-blue.svg>
 
-[Documentation: latest release]:
+[Documentation (latest release)]:
   <https://img.shields.io/docsrs/tabular.svg>
 
 Builds plain, automatically-aligned tables of monospaced text.
