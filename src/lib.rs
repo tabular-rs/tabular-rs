@@ -1,4 +1,3 @@
-#![doc(html_root_url = "https://docs.rs/tabular/0.1.4")]
 //! Builds plain, automatically-aligned tables of monospaced text.
 //! This is basically what you want if you are implementing `ls`.
 //!
