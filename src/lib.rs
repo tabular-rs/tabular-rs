@@ -61,7 +61,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! tabular = "0.1.4"
+//! tabular = "0.2.0"
 //! ```
 //!
 //! to your `Cargo.toml`.
