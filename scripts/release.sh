@@ -29,7 +29,7 @@ GIT_ROOT=$(git rev-parse --show-toplevel)
 cd "$GIT_ROOT"
 
 # Add a link to the latest version to the changelog.
-TAG_LINK_PREFIX="https://github.com/tov/tabular-rs/releases/tag"
+TAG_LINK_PREFIX="https://github.com/tabular-rs/tabular-rs/releases/tag"
 TAG_LINK_LINE="[$VERSION_NUMBER]: $TAG_LINK_PREFIX/$VERSION_NUMBER"
 
 if !(grep --fixed-strings --quiet "$TAG_LINK_LINE" CHANGELOG.md); then
