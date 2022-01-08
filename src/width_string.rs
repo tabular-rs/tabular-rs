@@ -17,6 +17,7 @@ impl WidthString {
         WidthString { string, width }
     }
 
+    #[cfg(feature = "ansi-cell")]
     pub fn new_ansi<T: ToString>(thing: T) -> Self {
         let string = thing.to_string();
         let stripped_bytes =
@@ -60,7 +61,8 @@ impl Debug for WidthString {
 }
 
 #[cfg(test)]
-mod tests {
+#[cfg(feature = "ansi-cell")]
+mod ansi_cell_tests {
     use crate::width_string::WidthString;
     use colored::Colorize;
 
