@@ -5,6 +5,7 @@
 [![License: MIT]](LICENSE-MIT)
 [![License: Apache 2.0]](LICENSE-APACHE)
 [![Documentation (latest release)]](https://docs.rs/tabular/latest)
+[![Documentation (main)]](https://tabular-rs.github.io/tabular-rs/rustdoc/tabular)
 
 [Build Status]:
   <https://github.com/tabular-rs/tabular-rs/actions/workflows/ci.yml/badge.svg>
@@ -25,7 +26,10 @@
   <https://img.shields.io/badge/license-Apache_2.0-blue.svg>
 
 [Documentation (latest release)]:
-  <https://img.shields.io/docsrs/tabular.svg>
+  <https://img.shields.io/badge/docs-latest-brightgreen.svg>
+
+[Documentation (main)]:
+  <https://img.shields.io/badge/docs-main-purple.svg>
 
 Builds plain, automatically-aligned tables of monospaced text.
 This is basically what you want if you are implementing `ls`.
