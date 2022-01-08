@@ -57,3 +57,4 @@ Initial release.
 [0.1.2]: https://github.com/tabular-rs/tabular-rs/releases/tag/0.1.2
 [0.1.3]: https://github.com/tabular-rs/tabular-rs/releases/tag/0.1.3
 [0.1.4]: https://github.com/tabular-rs/tabular-rs/releases/tag/0.1.4
+[0.2.0]: https://github.com/tabular-rs/tabular-rs/releases/tag/0.2.0
