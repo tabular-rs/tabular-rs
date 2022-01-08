@@ -91,6 +91,7 @@ impl Row {
     /// If the table is being printed out to a terminal that supports ANSI escape sequences,
     /// cell widths need to account for that.
     #[must_use]
+    #[cfg(feature = "ansi-cell")]
     pub fn with_ansi_cell<S: Display>(mut self, value: S) -> Self {
         self.add_ansi_cell(value);
         self
@@ -98,7 +99,8 @@ impl Row {
 
     /// Adds a cell to this table row with a custom width.
     ///
-    /// Similar to [`with_ansi_cell`], except it returns `&mut Self` rather than `Self`.
+    /// Similar to [`Self::with_ansi_cell`], except it returns `&mut Self` rather than `Self`.
+    #[cfg(feature = "ansi-cell")]
     pub fn add_ansi_cell<S: Display>(&mut self, value: S) -> &mut Self {
         self.0.push(WidthString::new_ansi(value));
         self

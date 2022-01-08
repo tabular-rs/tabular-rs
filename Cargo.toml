@@ -12,9 +12,10 @@ edition = "2018"
 
 [features]
 default = ["unicode-width"]
+ansi-cell = ["strip-ansi-escapes"]
 
 [dependencies]
-strip-ansi-escapes = "0.1.1"
+strip-ansi-escapes = { version = "0.1.1", optional = true }
 unicode-width = { version = "0.1.5", optional = true }
 
 [dev-dependencies]
