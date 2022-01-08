@@ -7,10 +7,10 @@
 [![Documentation (latest release)]](https://docs.rs/tabular/latest)
 
 [Build Status]:
-  <https://github.com/tov/tabular-rs/actions/workflows/ci.yml/badge.svg>  
+  <https://github.com/tabular-rs/tabular-rs/actions/workflows/ci.yml/badge.svg>
 
 [CI]:
-  <https://github.com/tov/tabular-rs/actions>
+  <https://github.com/tabular-rs/tabular-rs/actions>
 
 [Crates.io]:
   <https://img.shields.io/crates/v/tabular.svg?maxAge=2592000>
